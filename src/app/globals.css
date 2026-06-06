@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-surface: #12121a;
+  --accent-primary: #00f5a0;
+  --accent-secondary: #7b2fff;
+  --accent-danger: #ff3d3d;
+  --accent-warn: #ffaa00;
+  --text-primary: #e8e8f0;
+  --text-secondary: #8888aa;
+  --border: #2a2a3a;
+}
+
+html, body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Inter", "IBM Plex Sans", sans-serif;
+}
+
+.font-mono-display {
+  font-family: ui-monospace, "JetBrains Mono", "Space Mono", "Menlo", monospace;
+  letter-spacing: 0.02em;
+}
+
+.surface {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+}
+
+.accent-text {
+  color: var(--accent-primary);
+}
+
+.danger-text {
+  color: var(--accent-danger);
+}
+
+.muted-text {
+  color: var(--text-secondary);
+}
+
+.btn {
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.375rem;
+  font-family: ui-monospace, "JetBrains Mono", "Space Mono", "Menlo", monospace;
+  font-size: 0.875rem;
+  transition: border-color 120ms ease, background 120ms ease;
+  cursor: pointer;
+}
+
+.btn:hover:not(:disabled) {
+  border-color: var(--accent-primary);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent-primary);
+  color: var(--bg-primary);
+  border-color: var(--accent-primary);
+  font-weight: 600;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #00d68b;
+  border-color: #00d68b;
+}
+
+.btn-danger {
+  border-color: var(--accent-danger);
+  color: var(--accent-danger);
+}
+
+.input {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.pulse-timer {
+  animation: pulse-glow 1s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { color: var(--accent-danger); text-shadow: 0 0 6px rgba(255, 61, 61, 0.6); }
+  50% { color: #ff8080; text-shadow: 0 0 16px rgba(255, 61, 61, 1); }
+}
