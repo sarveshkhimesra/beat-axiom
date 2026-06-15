@@ -5,7 +5,11 @@ import { getSession } from "@/lib/duel/store";
 export const runtime = "nodejs";
 
 function baseUrl(): string {
-  return process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+  if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL;
+  // Vercel injects the deployment/production domain at runtime.
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
+  if (vercel) return `https://${vercel}`;
+  return "http://localhost:3000";
 }
 
 export async function generateMetadata({ params }: { params: { shareId: string } }): Promise<Metadata> {
