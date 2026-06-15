@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Deal — Viral Pivot Ideation · June 2026</title>
+<style>
+  :root {
+    --bg: #0d0d12;
+    --bg-card: #13131a;
+    --bg-card-hover: #17171f;
+    --border: #22222e;
+    --accent: #00f5a0;
+    --accent-dim: #00c87f;
+    --text: #e8e8f0;
+    --text-dim: #8888a0;
+    --text-muted: #555568;
+    --red: #ff5555;
+    --yellow: #f5c842;
+    --blue: #6699ff;
+    --purple: #b06aff;
+    --font-mono: 'Space Mono', 'Fira Mono', 'Courier New', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    padding: 48px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+  }
+
+  .game-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.25;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 24px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .meta-pill {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text-dim);
+  }
+
+  /* Grounding summary */
+  .grounding {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+    margin-bottom: 48px;
+  }
+
+  .grounding h2 {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .grounding-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 600px) { .grounding-grid { grid-template-columns: 1fr; } }
+
+  .grounding-item h3 {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+
+  .grounding-item p, .grounding-item ul {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .grounding-item ul { padding-left: 16px; }
+  .grounding-item li { margin-bottom: 3px; }
+
+  /* Frame dividers */
+  .frame-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    margin-top: 8px;
+  }
+
+  .frame-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .frame-a { background: rgba(0, 245, 160, 0.08); color: var(--accent); border: 1px solid rgba(0, 245, 160, 0.25); }
+  .frame-b { background: rgba(102, 153, 255, 0.08); color: var(--blue); border: 1px solid rgba(102, 153, 255, 0.25); }
+
+  .frame-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* Idea cards */
+  .ideas-section { margin-bottom: 56px; }
+
+  .ideas-section > h2 {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .idea-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: border-color 0.15s;
+  }
+
+  .idea-card:hover {
+    border-color: #333348;
+  }
+
+  .idea-card.frame-a-card { border-left: 3px solid var(--accent); }
+  .idea-card.frame-b-card { border-left: 3px solid var(--blue); }
+
+  .idea-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .idea-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .axis-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 3px 9px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .axis-solo     { background: rgba(176, 106, 255, 0.12); color: var(--purple); border: 1px solid rgba(176, 106, 255, 0.3); }
+  .axis-artifact { background: rgba(0, 245, 160, 0.08);  color: var(--accent);  border: 1px solid rgba(0, 245, 160, 0.25); }
+  .axis-coo      { background: rgba(245, 200, 66, 0.1);   color: var(--yellow);  border: 1px solid rgba(245, 200, 66, 0.25); }
+  .axis-network  { background: rgba(102, 153, 255, 0.1);  color: var(--blue);    border: 1px solid rgba(102, 153, 255, 0.25); }
+  .axis-trust    { background: rgba(255, 85, 85, 0.08);   color: var(--red);     border: 1px solid rgba(255, 85, 85, 0.2); }
+
+  .idea-summary {
+    color: var(--text);
+    font-size: 14.5px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .idea-fields {
+    display: grid;
+    gap: 12px;
+  }
+
+  .field {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 8px;
+    align-items: baseline;
+  }
+
+  @media (max-width: 500px) { .field { grid-template-columns: 1fr; } }
+
+  .field-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    padding-top: 1px;
+  }
+
+  .field-value {
+    font-size: 13.5px;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  .field-value strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .basis-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  .basis-direct   { background: rgba(0, 245, 160, 0.1); color: var(--accent); }
+  .basis-external { background: rgba(102, 153, 255, 0.1); color: var(--blue); }
+  .basis-reasoned { background: rgba(176, 106, 255, 0.1); color: var(--purple); }
+
+  .meeting-test {
+    background: rgba(245, 200, 66, 0.05);
+    border: 1px solid rgba(245, 200, 66, 0.18);
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--yellow);
+    font-style: italic;
+    margin-top: 4px;
+  }
+
+  .caveat-note {
+    background: rgba(255, 85, 85, 0.06);
+    border: 1px solid rgba(255, 85, 85, 0.2);
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--red);
+    margin-top: 8px;
+    font-family: var(--font-mono);
+  }
+
+  /* Rejected ideas summary */
+  .rejections {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+    margin-bottom: 48px;
+  }
+
+  .rejections h2 {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 16px;
+  }
+
+  .rejection-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    align-items: baseline;
+  }
+
+  .rejection-row:last-child { border-bottom: none; }
+
+  .rejection-name {
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  .rejection-reason {
+    color: var(--text-muted);
+  }
+
+  /* Next steps */
+  .next-steps {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+  }
+
+  .next-steps h2 {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 16px;
+  }
+
+  .next-steps p {
+    font-size: 13.5px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+
+  .next-steps code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: rgba(255,255,255,0.05);
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: var(--accent);
+  }
+
+  footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="game-label">The Deal · Ideation Session</div>
+  <h1>Viral Pivot: Frame A + Frame B Candidates</h1>
+  <p class="subtitle">Assumption-breaking and constraint-flipping for LinkedIn virality and solo public play</p>
+  <div class="meta-row">
+    <span class="meta-pill">2026-06-15</span>
+    <span class="meta-pill">17 raw candidates → 6 survivors</span>
+    <span class="meta-pill">Adversarial filtered</span>
+    <span class="meta-pill">Next: ce-brainstorm on chosen idea</span>
+  </div>
+</header>
+
+<!-- Grounding -->
+<div class="grounding">
+  <h2>Grounding Summary</h2>
+  <div class="grounding-grid">
+    <div class="grounding-item">
+      <h3>Architecture Unlocks</h3>
+      <ul>
+        <li>finalizeGame has no facilitator check → solo play is already unblocked backend-side</li>
+        <li>Token-keyed stable URLs → same URL = same result = shareable link</li>
+        <li>25 dimensions + quirkySummary + quirkyQuote + temperatureGauge + secretPriorityRevealed per player</li>
+        <li>opengraph-image.tsx not implemented → direct unlock for LinkedIn OG cards</li>
+        <li>mutateGameState is a single clean mutation primitive</li>
+      </ul>
+    </div>
+    <div class="grounding-item">
+      <h3>Assumptions Broken</h3>
+      <ul>
+        <li><strong>Assumption 1</strong> — Facilitator required → backend already facilitator-free</li>
+        <li><strong>Assumption 4</strong> — Result is the end → result can be the start of professional identity</li>
+        <li><strong>Assumption 7</strong> — Result must be game-focused → can reflect real professional context</li>
+        <li><strong>Assumption 6</strong> — COO is just a viewer → COO as root node of nomination chain</li>
+      </ul>
+    </div>
+    <div class="grounding-item">
+      <h3>External Analogues (verified)</h3>
+      <ul>
+        <li>Wordle: shared-scenario grid → membership card, not score card</li>
+        <li>16Personalities: positive-sum archetype label → 18% share rate for professional quizzes</li>
+        <li>ALS Ice Bucket: public named nomination → social obligation from named person</li>
+        <li>StrengthsFinder: durable archetype = professional identity, not game result</li>
+        <li>Duolingo: streak loss-aversion > positive reward for retention</li>
+      </ul>
+    </div>
+    <div class="grounding-item">
+      <h3>Topic Axes</h3>
+      <ul>
+        <li>Self-serve solo play</li>
+        <li>Result artifact (archetype / OG preview)</li>
+        <li>COO-tag loop</li>
+        <li>Network seeding &amp; retention</li>
+        <li>Trust &amp; brand rails</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- SURVIVORS -->
+<div class="ideas-section">
+  <h2>Survivors — 6 Ideas (adversarially filtered from 17)</h2>
+
+  <!-- Frame A header -->
+  <div class="frame-header">
+    <span class="frame-label frame-a">Frame A</span>
+    <span class="frame-desc">Breaking fixed assumptions to unlock viral mechanic</span>
+  </div>
+
+  <!-- IDEA 1: Archetype OG Card -->
+  <div class="idea-card frame-a-card">
+    <div class="idea-header">
+      <div class="idea-title">The Sales Archetype Card</div>
+      <span class="axis-tag axis-artifact">Result Artifact</span>
+    </div>
+    <p class="idea-summary">
+      At game end, derive a named archetype from the 25 skill dimensions already generated (e.g. "The Disruptor", "The Consensus Builder") and render it as a 1200x627 OG image via Next.js <code>opengraph-image.tsx</code> — currently unimplemented and exactly ready for this. The card shows the archetype name as a hero label, the player's top 3 dimension percentile ranks ("Top 12% on Negotiation"), and one line of the AXIOM <code>quirkySummary</code>. The URL is token-keyed and stable — pasting it into LinkedIn auto-unfurls the card with no upload, no screenshot, no login.
+    </p>
+    <div class="idea-fields">
+      <div class="field">
+        <span class="field-label">Basis</span>
+        <span class="field-value"><span class="basis-badge basis-external">external</span>16Personalities achieves 18% share rate for professional quizzes specifically because the archetype label is positive-sum (every label sounds like an asset) and the card is identity-flattering, not score-ranked.</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Why it matters</span>
+        <span class="field-value">"I'm The Disruptor — top 12% on Negotiation" is a LinkedIn post; "I scored 74/100" is not. The archetype breaks <strong>Assumption 7</strong> (result must be about the game) — it becomes a professional identity claim that happens to be verified by AI simulation.</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Assumption broken</span>
+        <span class="field-value">Assumption 7 — result card has to be about the game. Here, it's about who the player is professionally.</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Meeting test</span>
+        <div class="meeting-test">Show Rahul his own archetype card first. When the COO posts his type, every AM in the room will want to know theirs — and the card link does the distribution.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IDEA 2: Solo One-Round Deal Card -->
+  <div class="idea-card frame-a-card">
+    <div class="idea-header">
+      <div class="idea-title">Deal Card — Solo One-Round Shareable</div>
+      <span class="axis-tag axis-solo">Self-Serve Solo Play</span>
+    </div>
+    <p class="idea-summary">
+      Strip the facilitator gate entirely. Generate a UUID token at page load, call <code>mutateGameState</code> with it, and auto-assign the solo player — zero backend changes. The player runs a single round vs NovaBrand, receives a score and AXIOM verdict, and the result is immediately available as a shareable OG card. The entry URL is public, no login, no team setup, no invite. This breaks <strong>Assumption 1</strong> (game needs a facilitator) by exploiting that <code>finalizeGame</code> already has no facilitator check.
+    </p>
+    <div class="idea-fields">
+      <div class="field">
+        <span class="field-label">Basis</span>
+        <span class="field-value"><span class="basis-badge basis-direct">direct</span>finalizeGame has no facilitator check; the avatar response endpoint has no facilitator gate — any teamId + message works. Solo play is a frontend decision, not a backend constraint.</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Why it matters</span>
+        <span class="field-value">The share card fires at peak emotional moment — the second the player sees their result. 10-minute time-to-result removes all friction between "saw someone's card on LinkedIn" and "I played and shared mine."</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Assumption broken</span>
+        <span class="field-value">Assumption 1 — game needs a facilitator. Also breaks Assumption 2 — game needs 6 teams.</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Meeting test</span>
+        <div class="meeting-test">We can put a solo-playable link live this week with no backend work — the share card posts to LinkedIn and every share is a free impression for the offsite.</div>
+      </div>
+    </div>
+    <div class="caveat-note">Caveat: one round = thin signal for archetype. Frame it as "First Test" result, not final verdict — implies replay for full profile.</div>
+  </div>
+
+  <!-- IDEA 3: Nomination Protocol -->
+  <div class="idea-card frame-a-card">
+    <div class="idea-header">
+      <div class="idea-title">The Nomination Protocol</div>
+      <span class="axis-tag axis-network">Network Seeding &amp; Retention</span>
+    </div>
+    <p class="idea-summary">
+      Every completed game session ends with a structured professional nomination: the player types one LinkedIn handle, and the game generates a pre-filled LinkedIn post draft that reads like peer recognition — "I ran the NovaBrand simulation. I'm nominating [Person X] because I think they'd handle Round 4 differently — and I want to see it." The nominee's name is baked into the URL as a query param, displayed as a personalized banner when they open the game. The seeding event: offsite attendees (who already played) each nominate one person, and Rahul receives nominations from multiple players simultaneously.
+    </p>
+    <div class="idea-fields">
+      <div class="field">
+        <span class="field-label">Basis</span>
+        <span class="field-value"><span class="basis-badge basis-external">external</span>ALS Ice Bucket Challenge: public named nomination + social obligation from named person = 115M raised in 8 weeks. The nominator's status confers obligation — "Rahul nominated you" is categorically more compelling than "the app challenged you."</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Why it matters</span>
+        <span class="field-value">Named nomination is one of the most replicated viral mechanics in existence. It requires no backend — URL construction and a post draft prefill. Viral coefficient is structurally &gt;1 if each player nominates one person who plays.</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Assumption broken</span>
+        <span class="field-value">Assumption 6 — COO is just a viewer. The Nomination Protocol makes Rahul the natural root node of the first wave without requiring him to post; offsite attendees nominate him by default.</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Meeting test</span>
+        <div class="meeting-test">Show Rahul the LinkedIn post draft that six offsite attendees would send nominating him — if that appeared in his notifications six times this week, he would play.</div>
+      </div>
+    </div>
+    <div class="caveat-note">Handle validation: player types a LinkedIn handle unverified — add a preview step ("does this look right?") to prevent tagging the wrong person.</div>
+  </div>
+
+
+  <!-- Frame B header -->
+  <div class="frame-header" style="margin-top: 36px;">
+    <span class="frame-label frame-b">Frame B</span>
+    <span class="frame-desc">Inverting obvious constraints to their opposite or extreme</span>
+  </div>
+
+  <!-- IDEA 4: Synchronized Deal Day -->
+  <div class="idea-card frame-b-card">
+    <div class="idea-header">
+      <div class="idea-title">Synchronized Deal Day</div>
+      <span class="axis-tag axis-artifact">Result Artifact</span>
+    </div>
+    <p class="idea-summary">
+      Lock the game so a new scenario (NovaBrand brief + AXIOM rubric) releases every Monday at 9 AM and expires Sunday night. Every player that week faces the identical negotiation. The share card shows not a personal score but a membership signal: "Week 23 Deal — played by 47 people." The AXIOM quirkySummary for each week becomes a shared cultural artifact — everyone who played Monday gets the same reference point. An atomic counter on the week key is the only new backend surface; no user identity required.
+    </p>
+    <p class="idea-summary" style="margin-top: -8px;">
+      This is the constraint inversion of "What if the game had no end?" — instead of no end, the game has a weekly pulse. Every Monday is a fresh start that resets the competitive stakes without erasing professional identity.
+    </p>
+    <div class="idea-fields">
+      <div class="field">
+        <span class="field-label">Basis</span>
+        <span class="field-value"><span class="basis-badge basis-external">external</span>Wordle grew from 300 to 13M players in 6 weeks with zero paid distribution. The single shared daily puzzle is what made the grid shareable — "did you get today's?" is a fundamentally different social act than "I got a high score."</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Why it matters</span>
+        <span class="field-value">The Monday card is not "I scored X" — it is "I showed up this week," which is lower ego risk and therefore shared more broadly. Rahul gets a standing Monday moment to post the weekly participant count on LinkedIn, making him the community anchor without requiring him to play every week.</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Constraint inverted</span>
+        <span class="field-value">"What if the game had no end?" → The game has no permanent end state but a weekly reset. Membership in "Week 23" is the identity, not a final verdict.</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Meeting test</span>
+        <div class="meeting-test">We keep the exact same game engine — we just lock the scenario to refresh weekly, which means every sales leader in Rahul's network who shares a card is implicitly saying they showed up this week.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IDEA 5: The Rahul Challenge Card -->
+  <div class="idea-card frame-b-card">
+    <div class="idea-header">
+      <div class="idea-title">The Rahul Challenge Card</div>
+      <span class="axis-tag axis-coo">COO-Tag Loop</span>
+    </div>
+    <p class="idea-summary">
+      This is the constraint inversion of "What if the COO's result was the ONLY thing shared?" Rahul plays the game once and instead of a generic share button, receives a "Challenge 5 people" flow: he types 5 LinkedIn names, and the system generates 5 personalized game URLs each with a custom OG card that reads "Rahul Kothari challenged you to beat his AXIOM score." The recipient URL pre-fills a "you've been challenged by Rahul" banner in the game UI. Only Rahul's post goes live publicly — the 5 recipients get a personalized entry point, and their results, if shared, reference Rahul's card as the origin node.
+    </p>
+    <div class="idea-fields">
+      <div class="field">
+        <span class="field-label">Basis</span>
+        <span class="field-value"><span class="basis-badge basis-external">external</span>ALS Ice Bucket: the nominator (Rahul) is the public signal, the nominees have a named binary obligation, and the nominator's social status is what confers pressure — same asymmetry, applied to a professional audience where Rahul's status as COO is the lever.</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Why it matters</span>
+        <span class="field-value">Rahul's existing LinkedIn network reach does what paid ads cannot. One post from a COO naming five enterprise sales leaders creates social obligation that an app notification never could. Viral coefficient from the first post is structurally &gt;1.</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Constraint inverted</span>
+        <span class="field-value">"What if the COO's result was the ONLY thing shared?" → Rahul doesn't broadcast his result — he uses it as a proof-of-play credential to challenge others. His result is the authority that makes the challenge credible, not the content itself.</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Meeting test</span>
+        <div class="meeting-test">You play once, you get a card, you name five people — your post goes out, five personalized URLs generate, and anything they share traces back to you as the origin; zero ongoing effort required after that first game.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IDEA 6: Closer Score Badge -->
+  <div class="idea-card frame-b-card">
+    <div class="idea-header">
+      <div class="idea-title">The Closer Score — Credentialled Role Badge</div>
+      <span class="axis-tag axis-artifact">Result Artifact</span>
+    </div>
+    <p class="idea-summary">
+      This is the constraint inversion of "What if there were 1,000 simultaneous players?" When there are 1,000 players, a leaderboard becomes meaningless noise — but a credentialled tier survives at scale. After any solo session, The Deal issues a tier: Trainee Closer / Senior Closer / Master Closer — derived from the existing scoring rubric (margin captured, concession count, round efficiency). The tier renders as a badge OG image at a token-keyed URL. Calibrated so roughly 20% of first-time players reach Senior or above — flattering but not trivial. No user accounts, no cross-session storage. A deterministic tier function over the existing <code>finalizeGame</code> payload.
+    </p>
+    <div class="idea-fields">
+      <div class="field">
+        <span class="field-label">Basis</span>
+        <span class="field-value"><span class="basis-badge basis-external">external</span>CFA and bar exam pass announcements generate high organic LinkedIn engagement because the result is verifiable proof of demonstrated competence. Credly/Coursera badge sharing is a documented behavior in professional communities. The 20% calibration threshold mirrors the "flattering but not trivial" bar from Interact quiz funnel research.</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Why it matters</span>
+        <span class="field-value">A named tier reframes "I played a sales game" as "I benchmarked my closing ability" — a materially different professional signal. The calibration note solves the "nobody shares a Trainee badge" failure mode: design the thresholds so the first-time player has a real shot at a shareable tier.</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Constraint inverted</span>
+        <span class="field-value">"What if there were 1,000 simultaneous players?" → At 1,000 players, drop the leaderboard and issue a credential instead. Credentials scale to any volume; leaderboards degrade to noise.</span>
+      </div>
+      <div class="field">
+        <span class="field-label">Meeting test</span>
+        <div class="meeting-test">The Closer Score turns every player into a walking reference for The Deal — when a Sales VP posts their Master Closer badge, their entire network sees Razorpay's name on a credentialled result.</div>
+      </div>
+    </div>
+    <div class="caveat-note">Caveat: verify that token URLs persist after game state is overwritten by a new game — if tokens are ephemeral, badge links break on LinkedIn (reputation hazard). Write result to <code>finale:{gameId}</code> Redis key with 30-day TTL at finalize time.</div>
+  </div>
+
+</div>
+
+
+<!-- Rejected ideas -->
+<div class="rejections">
+  <h2>Rejected Candidates (11) — Reasons</h2>
+  <div class="rejection-row">
+    <span class="rejection-name">Peer-First Reveal</span>
+    <span class="rejection-reason">Cross-token inter-user state doesn't exist; hostage mechanic (player locked until peer responds) converts players to churners.</span>
+  </div>
+  <div class="rejection-row">
+    <span class="rejection-name">COO Challenge Drop</span>
+    <span class="rejection-reason">Entire viral loop contingent on one person posting once — not a mechanic, a prayer. Single point of human failure.</span>
+  </div>
+  <div class="rejection-row">
+    <span class="rejection-name">Living Sales Identity</span>
+    <span class="rejection-reason">Cross-session identity is the core requirement. The Deal has no user accounts; building them is a full product pivot, not an addition.</span>
+  </div>
+  <div class="rejection-row">
+    <span class="rejection-name">Deal × 1000 Leaderboard</span>
+    <span class="rejection-reason">Without identity, same player replays and floods top. Honor-system leaderboards degrade to spam within days of real traffic.</span>
+  </div>
+  <div class="rejection-row">
+    <span class="rejection-name">Rahul Challenge Card (5-name)</span>
+    <span class="rejection-reason">Hard-coded to 5 one-time URLs; viral chain requires each recipient to also nominate, which isn't built in. Doesn't self-propagate. (Merged into Nomination Protocol.)</span>
+  </div>
+  <div class="rejection-row">
+    <span class="rejection-name">Daily Rep — Streak Ladder</span>
+    <span class="rejection-reason">Streaks are definitionally cross-session. No user account layer means every play is Day 1; streak mechanic cannot exist without persistent identity.</span>
+  </div>
+  <div class="rejection-row">
+    <span class="rejection-name">Weekly Deal + Leaderboard</span>
+    <span class="rejection-reason">Optional handle with no identity verification → honor-system leaderboard stuffed within days. Leaderboard half of idea removed; synchronization half absorbed into Synchronized Deal Day.</span>
+  </div>
+  <div class="rejection-row">
+    <span class="rejection-name">Spoiler-Safe Recap Grid</span>
+    <span class="rejection-reason">Wordle grid virality depends on shared scenario; without synchronized scenarios, grids are incomparable and social pull disappears. Viable only as add-on to Synchronized Deal Day.</span>
+  </div>
+  <div class="rejection-row">
+    <span class="rejection-name">COO Verdict Card</span>
+    <span class="rejection-reason">Scales only as long as Rahul manually comments on individual posts. Not a mechanic — a sustained behavioral ask with no enforcement.</span>
+  </div>
+  <div class="rejection-row">
+    <span class="rejection-name">COO's Scouting Report</span>
+    <span class="rejection-reason">Content production workflow for one person, not a self-propagating mechanic. Requires new admin tooling for minimal viral payoff.</span>
+  </div>
+  <div class="rejection-row">
+    <span class="rejection-name">Proof-of-Performance Badge</span>
+    <span class="rejection-reason">Near-duplicate of Closer Score. Closer Score is strictly better: role-specific label, calibration floor, cleaner implementation. Merged.</span>
+  </div>
+</div>
+
+
+<!-- Next steps -->
+<div class="next-steps">
+  <h2>Next Steps</h2>
+  <p>Run <code>/ce-brainstorm</code> on one of these survivors to define it precisely enough for planning. Recommended starting point:</p>
+  <p><strong>1. Sales Archetype Card</strong> — lowest build cost, highest axis coverage (result artifact + identity), directly enables all other ideas. Build this first; others plug into the OG card infrastructure it creates.</p>
+  <p><strong>2. Deal Card — Solo One-Round</strong> — zero backend work, frontend-only unlock. Pair with the Archetype Card to give the solo player a shareable identity at end of their first round.</p>
+  <p><strong>3. Nomination Protocol</strong> — add as the exit mechanism after the first play. Now the COO-tag loop is live without Rahul having to do anything proactively.</p>
+  <p>These three together form the minimum viable viral loop: solo play → archetype card → nominate one person. The Synchronized Deal Day and Closer Score are layered on top once the baseline loop is confirmed working.</p>
+</div>
+
+<footer>
+  <span>ce-ideate · the-deal-public · 2026-06-15</span>
+  <span>17 candidates → 6 survivors · adversarially filtered</span>
+</footer>
+
+</body>
+</html>
