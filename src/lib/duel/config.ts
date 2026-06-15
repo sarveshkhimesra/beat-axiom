@@ -1,7 +1,8 @@
 // Client-safe config: must NOT import the Anthropic SDK (which pulls node:fs
 // into the browser bundle). Model names are read straight from env here.
 
-const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-6";
+const DEFAULT_MODEL =
+  process.env.ANTHROPIC_MODEL ?? process.env.AZURE_ANTHROPIC_MODEL ?? "claude-sonnet-4-6";
 
 /** Cheap/fast model for the many buyer turns. */
 export const AVATAR_MODEL = process.env.DUEL_AVATAR_MODEL ?? DEFAULT_MODEL;

@@ -2,14 +2,23 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { NextRequest } from "next/server";
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+const hasRedis = !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
 
-// 30 buyer turns / 10 min / IP, and 6 verdicts / 10 min / IP.
-const turnLimiter = new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(30, "10 m"), prefix: "duel:rl:turn" });
-const verdictLimiter = new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(6, "10 m"), prefix: "duel:rl:verdict" });
+const redis = hasRedis
+  ? new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL!,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+    })
+  : null;
+
+// 30 buyer turns / 10 min / IP, and 6 verdicts / 10 min / IP. When Upstash is
+// not configured (local dev), rate-limiting is skipped (always allowed).
+const turnLimiter = redis
+  ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(30, "10 m"), prefix: "duel:rl:turn" })
+  : null;
+const verdictLimiter = redis
+  ? new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(6, "10 m"), prefix: "duel:rl:verdict" })
+  : null;
 
 export function clientIp(req: NextRequest): string {
   return (
@@ -19,10 +28,12 @@ export function clientIp(req: NextRequest): string {
   );
 }
 
-export async function checkTurnLimit(ip: string) {
+export async function checkTurnLimit(ip: string): Promise<{ success: boolean }> {
+  if (!turnLimiter) return { success: true };
   return turnLimiter.limit(ip);
 }
-export async function checkVerdictLimit(ip: string) {
+export async function checkVerdictLimit(ip: string): Promise<{ success: boolean }> {
+  if (!verdictLimiter) return { success: true };
   return verdictLimiter.limit(ip);
 }
 
