@@ -1,9 +1,12 @@
-import { ANTHROPIC_MODEL } from "@/lib/anthropic";
+// Client-safe config: must NOT import the Anthropic SDK (which pulls node:fs
+// into the browser bundle). Model names are read straight from env here.
+
+const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-6";
 
 /** Cheap/fast model for the many buyer turns. */
-export const AVATAR_MODEL = process.env.DUEL_AVATAR_MODEL ?? ANTHROPIC_MODEL;
+export const AVATAR_MODEL = process.env.DUEL_AVATAR_MODEL ?? DEFAULT_MODEL;
 /** Stronger model for the single AXIOM verdict call. */
-export const VERDICT_MODEL = process.env.DUEL_VERDICT_MODEL ?? ANTHROPIC_MODEL;
+export const VERDICT_MODEL = process.env.DUEL_VERDICT_MODEL ?? DEFAULT_MODEL;
 
 /** Max player turns per duel — bounds API cost per session. */
 export const MAX_PLAYER_TURNS = 7;
