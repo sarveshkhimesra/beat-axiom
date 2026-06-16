@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { getSession } from "@/lib/duel/store";
+import { buildShareText } from "@/lib/duel/shareText";
+import ShareButtons from "./ShareButtons";
 
 export const runtime = "nodejs";
 
@@ -39,6 +41,8 @@ export default async function ScorecardPage({ params }: { params: { shareId: str
     );
   }
   const v = session.verdict;
+  const shareUrl = `${baseUrl()}/r/${session.shareId}`;
+  const postText = buildShareText(v, shareUrl);
   return (
     <main style={{ maxWidth: 720, margin: "0 auto", padding: 48 }}>
       <div className="surface" style={{ padding: 32, borderRadius: 12 }}>
@@ -49,7 +53,8 @@ export default async function ScorecardPage({ params }: { params: { shareId: str
         <div style={{ fontSize: 28, color: "var(--accent-secondary)" }}>“{v.title}” · better than {session.percentile}% of players</div>
         <p style={{ marginTop: 24, fontSize: 20 }}>AXIOM: “{v.roast}”</p>
       </div>
-      <div style={{ marginTop: 32, textAlign: "center" }}>
+      <ShareButtons shareUrl={shareUrl} postText={postText} />
+      <div style={{ marginTop: 28, textAlign: "center" }}>
         <Link href="/" className="accent-text font-mono-display" style={{ fontSize: 22 }}>→ Think you can beat me? Take the duel</Link>
       </div>
     </main>
