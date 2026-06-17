@@ -11,7 +11,6 @@ export async function GET(_req: Request, { params }: { params: { shareId: string
   const title = session?.verdict.title ?? "—";
   const roastFull = session?.verdict.roast ?? "AXIOM has no comment.";
   const roast = roastFull.length > 160 ? roastFull.slice(0, 157) + "…" : roastFull;
-  const percentile = session?.percentile ?? 0;
   const scenario = session?.scenarioTitle ?? "The Duel";
 
   // Satori rule: any element with >1 child must set display:flex. We keep each
@@ -27,7 +26,7 @@ export async function GET(_req: Request, { params }: { params: { shareId: string
           <span style={{ fontSize: 200, color: "#00f5a0", fontWeight: 700 }}>{String(score)}</span>
           <span style={{ fontSize: 56, color: "#8888aa", marginLeft: 16 }}>/100</span>
         </div>
-        <div style={{ display: "flex", fontSize: 48, color: "#7b2fff" }}>{`“${title}” · better than ${percentile}% of players`}</div>
+        <div style={{ display: “flex”, fontSize: 48, color: “#7b2fff” }}>{`”${title}”`}</div>
         <div style={{ display: "flex", fontSize: 34, color: "#e8e8f0", marginTop: 32, lineHeight: 1.35 }}>{`AXIOM: “${roast}”`}</div>
       </div>
     ),

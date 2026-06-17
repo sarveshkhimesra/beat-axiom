@@ -62,7 +62,7 @@ export default async function ScorecardPage({ params }: { params: { shareId: str
             {v.score}<span style={{ fontSize: "clamp(24px, 6vw, 36px)", color: "var(--text-secondary)", fontWeight: 400 }}>/100</span>
           </div>
           <div style={{ fontSize: "clamp(20px, 5vw, 28px)", color: "var(--accent-secondary)", marginTop: 8 }}>
-            &quot;{v.title}&quot; · better than {session.percentile}% of players
+            &quot;{v.title}&quot;
           </div>
 
           {/* roast */}
