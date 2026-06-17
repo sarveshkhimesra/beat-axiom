@@ -220,11 +220,6 @@ export default function DuelClient() {
           ) : (
             <div style={{ color: "var(--text-secondary)", fontSize: 13 }}>{"[axiom] no questions remaining."}</div>
           )}
-          {turnsUsed >= 2 && canSend && (
-            <button onClick={getVerdict} disabled={busy} className="glow-box" style={{ marginTop: 10, padding: "10px 20px", borderRadius: 8, background: "var(--accent-primary)", color: "#040d08", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, width: "100%" }}>
-              ./face-axiom
-            </button>
-          )}
           {!canSend && (
             <button onClick={getVerdict} disabled={busy} className="glow-box" style={{ marginTop: 10, padding: "10px 20px", borderRadius: 8, background: "var(--accent-primary)", color: "#040d08", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, width: "100%" }}>
               ./face-axiom
