@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { anthropicClient, extractText } from "@/lib/anthropic";
 import { getScenario } from "@/lib/duel/scenarios";
 import { buildBuyerPrompt } from "@/lib/duel/avatarPrompt";
-import { AVATAR_MODEL, MAX_MESSAGE_CHARS, MAX_PLAYER_TURNS, DUEL_PAUSED } from "@/lib/duel/config";
+import { AVATAR_MODEL, MAX_PLAYER_TURNS, DUEL_PAUSED } from "@/lib/duel/config";
 import { checkTurnLimit, clientIp, verifyTurnstile } from "@/lib/duel/ratelimit";
 import { DuelMessage, ScenarioId } from "@/lib/duel/types";
 
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   if (!body.scenarioId || typeof body.message !== "string") {
     return NextResponse.json({ error: "scenarioId and message required" }, { status: 400 });
   }
-  const message = body.message.trim().slice(0, MAX_MESSAGE_CHARS);
+  const message = body.message.trim();
   if (!message) return NextResponse.json({ error: "message is empty" }, { status: 400 });
 
   const history = Array.isArray(body.history) ? body.history : [];

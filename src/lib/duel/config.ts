@@ -11,8 +11,8 @@ export const VERDICT_MODEL = process.env.DUEL_VERDICT_MODEL ?? DEFAULT_MODEL;
 
 /** Max player turns per duel — bounds API cost per session. */
 export const MAX_PLAYER_TURNS = 7;
-/** Max characters per player message. */
-export const MAX_MESSAGE_CHARS = 300;
+/** Max characters per player message (no limit — players speak/type freely). */
+export const MAX_MESSAGE_CHARS = Infinity;
 /** Rahul's LinkedIn handle text, pre-typed into share copy. */
 export const RAHUL_MENTION = "@Rahul Kothari";
 /** Kill switch: when "true", the duel is paused. */

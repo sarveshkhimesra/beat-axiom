@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SCENARIOS, SCENARIO_IDS } from "@/lib/duel/scenarios";
-import { MAX_PLAYER_TURNS, MAX_MESSAGE_CHARS } from "@/lib/duel/config";
+import { MAX_PLAYER_TURNS } from "@/lib/duel/config";
 import { DuelMessage, ScenarioId } from "@/lib/duel/types";
 import { sfx, isMuted, setMuted } from "@/lib/duel/sfx";
 import { useSpeech } from "@/lib/duel/useSpeech";
@@ -34,7 +34,7 @@ export default function DuelClient() {
   const [hook, setHook] = useState<string | null>(null);
   const [muted, setMutedState] = useState(false);
 
-  const speech = useSpeech((t) => setInput(t.slice(0, MAX_MESSAGE_CHARS)));
+  const speech = useSpeech((t) => setInput(t));
 
   useEffect(() => { setMutedState(isMuted()); }, []);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [history]);
@@ -175,10 +175,9 @@ export default function DuelClient() {
               <span className="accent-text" style={{ fontSize: 14, userSelect: "none" }}>&gt;</span>
               <input
                 value={input}
-                maxLength={MAX_MESSAGE_CHARS}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && send()}
-                placeholder={speech.listening ? "listening…" : "ask a sharp question"}
+                placeholder={speech.listening ? "listening..." : "ask a sharp question"}
                 disabled={busy}
                 className="prompt-input"
               />
