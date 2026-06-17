@@ -10,6 +10,18 @@ import { useSpeech } from "@/lib/duel/useSpeech";
 
 type Phase = "pick" | "play" | "scoring";
 
+/** A short, motivating beat shown after each answer to keep players hooked. */
+function hookFor(left: number): string {
+  if (left <= 0) return "Out of questions — time to face AXIOM.";
+  const lines = [
+    `Good going — ${left} to go.`,
+    `Nice probe. ${left} left — keep digging.`,
+    `You're onto something. ${left} to go.`,
+    `Sharp. ${left} left to land the deal.`,
+  ];
+  return lines[(MAX_PLAYER_TURNS - left) % lines.length];
+}
+
 export default function DuelClient() {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>("pick");
@@ -18,6 +30,7 @@ export default function DuelClient() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hook, setHook] = useState<string | null>(null);
   const [muted, setMutedState] = useState(false);
 
   const speech = useSpeech((t) => setInput(t.slice(0, MAX_MESSAGE_CHARS)));
@@ -46,6 +59,7 @@ export default function DuelClient() {
     if (speech.listening) speech.toggle();
     setBusy(true);
     setError(null);
+    setHook(null);
     sfx.send();
     try {
       const res = await fetch("/api/duel/avatar", {
@@ -58,6 +72,7 @@ export default function DuelClient() {
       setHistory((h) => [...h, data.playerMessage, data.buyerMessage]);
       setInput("");
       sfx.reply();
+      setHook(hookFor(MAX_PLAYER_TURNS - (turnsUsed + 1)));
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -136,6 +151,9 @@ export default function DuelClient() {
           </div>
         ))}
         {busy && phase === "play" && <div style={{ color: "var(--text-secondary)" }}>…thinking</div>}
+        {hook && !busy && phase === "play" && (
+          <div className="accent-text font-mono-display" style={{ fontSize: 14, alignSelf: "center" }}>{hook}</div>
+        )}
         {phase === "scoring" && <div className="accent-text">AXIOM is rendering its verdict…</div>}
       </div>
       {error && <div className="danger-text" style={{ marginBottom: 12 }}>{error}</div>}
