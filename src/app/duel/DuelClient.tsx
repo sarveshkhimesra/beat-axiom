@@ -7,6 +7,7 @@ import { MAX_PLAYER_TURNS, MAX_MESSAGE_CHARS } from "@/lib/duel/config";
 import { DuelMessage, ScenarioId } from "@/lib/duel/types";
 import { sfx, isMuted, setMuted } from "@/lib/duel/sfx";
 import { useSpeech } from "@/lib/duel/useSpeech";
+import AxiomAvatar from "@/components/AxiomAvatar";
 
 type Phase = "pick" | "play" | "scoring";
 
@@ -140,7 +141,10 @@ export default function DuelClient() {
   return (
     <main style={wrap}>
       <div className="font-mono-display" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, color: "var(--text-secondary)", fontSize: "clamp(12px, 3.2vw, 14px)" }}>
-        <span>{scenario?.title} · {turnsUsed}/{MAX_PLAYER_TURNS} questions</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+          <AxiomAvatar size={30} />
+          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{scenario?.title} · {turnsUsed}/{MAX_PLAYER_TURNS} questions</span>
+        </div>
         {muteBtn}
       </div>
       <div style={{ margin: "16px 0", display: "flex", flexDirection: "column", gap: 12 }}>

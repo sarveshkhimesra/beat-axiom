@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getSession } from "@/lib/duel/store";
 import { buildShareText } from "@/lib/duel/shareText";
 import ShareButtons from "./ShareButtons";
+import AxiomAvatar from "@/components/AxiomAvatar";
 
 export const runtime = "nodejs";
 
@@ -45,6 +46,10 @@ export default async function ScorecardPage({ params }: { params: { shareId: str
   const postText = buildShareText(v, shareUrl);
   return (
     <main style={{ maxWidth: 720, margin: "0 auto", padding: "clamp(20px, 5vw, 48px)", width: "100%", boxSizing: "border-box" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 20 }}>
+        <AxiomAvatar size={72} />
+        <div className="font-mono-display" style={{ color: "var(--accent-secondary)", letterSpacing: 2, marginTop: 8, fontSize: 13 }}>AXIOM HAS SPOKEN</div>
+      </div>
       <div className="surface" style={{ padding: "clamp(20px, 5vw, 32px)", borderRadius: 12 }}>
         <div style={{ color: "var(--text-secondary)", fontSize: "clamp(12px, 3.2vw, 15px)" }} className="font-mono-display">
           BEAT AXIOM · {session.scenarioTitle} · an AI by Rahul Kothari
