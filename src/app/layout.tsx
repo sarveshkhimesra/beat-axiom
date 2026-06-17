@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "The Deal",
-  description: "Real-time AI-powered sales training game",
+  title: "Beat AXIOM",
+  description: "An AI that grades your sales instincts. Seven questions. One shot. Built by Rahul Kothari.",
 };
 
 export default function RootLayout({

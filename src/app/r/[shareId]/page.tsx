@@ -9,7 +9,6 @@ export const runtime = "nodejs";
 
 function baseUrl(): string {
   if (process.env.NEXT_PUBLIC_BASE_URL) return process.env.NEXT_PUBLIC_BASE_URL;
-  // Vercel injects the deployment/production domain at runtime.
   const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
   if (vercel) return `https://${vercel}`;
   return "http://localhost:3000";
@@ -21,7 +20,7 @@ export async function generateMetadata({ params }: { params: { shareId: string }
   const title = session
     ? `I scored ${session.verdict.score}/100 on Beat AXIOM — "${session.verdict.title}"`
     : "Beat AXIOM — an AI sales duel by Rahul Kothari";
-  const description = session?.verdict.roast ?? "Take the 5-minute sales duel and see what AXIOM makes of you.";
+  const description = session?.verdict.roast ?? "Seven questions. One verdict. Can you beat AXIOM?";
   return {
     title,
     description,
@@ -35,9 +34,10 @@ export default async function ScorecardPage({ params }: { params: { shareId: str
   if (!session) {
     return (
       <main style={{ maxWidth: 640, margin: "0 auto", padding: 48 }}>
-        <h1 className="font-mono-display">Scorecard not found</h1>
-        <p style={{ color: "var(--text-secondary)" }}>This card may have expired.</p>
-        <Link href="/" className="accent-text">→ Take the duel</Link>
+        <div className="terminal-window" style={{ padding: "32px" }}>
+          <p style={{ color: "var(--text-secondary)" }}>[axiom] scorecard not found. it may have expired.</p>
+          <Link href="/" className="accent-text" style={{ marginTop: 16, display: "inline-block" }}>$ ./start-duel</Link>
+        </div>
       </main>
     );
   }
@@ -45,22 +45,50 @@ export default async function ScorecardPage({ params }: { params: { shareId: str
   const shareUrl = `${baseUrl()}/r/${session.shareId}`;
   const postText = buildShareText(v, shareUrl);
   return (
-    <main style={{ maxWidth: 720, margin: "0 auto", padding: "clamp(20px, 5vw, 48px)", width: "100%", boxSizing: "border-box" }}>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 20 }}>
-        <AxiomAvatar size={72} />
-        <div className="font-mono-display" style={{ color: "var(--accent-secondary)", letterSpacing: 2, marginTop: 8, fontSize: 13 }}>AXIOM HAS SPOKEN</div>
-      </div>
-      <div className="surface" style={{ padding: "clamp(20px, 5vw, 32px)", borderRadius: 12 }}>
-        <div style={{ color: "var(--text-secondary)", fontSize: "clamp(12px, 3.2vw, 15px)" }} className="font-mono-display">
-          BEAT AXIOM · {session.scenarioTitle} · an AI by Rahul Kothari
+    <main style={{ maxWidth: 680, margin: "0 auto", padding: "clamp(16px, 4vw, 40px)", width: "100%", boxSizing: "border-box" }}>
+      <div className="terminal-window" style={{ padding: 0 }}>
+        {/* AXIOM identity header */}
+        <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 12 }}>
+          <AxiomAvatar size={48} />
+          <div>
+            <div className="accent-text glow" style={{ fontSize: 18, fontWeight: 700 }}>AXIOM // VERDICT</div>
+            <div style={{ color: "var(--text-secondary)", fontSize: 12 }}>{session.scenarioTitle} · built by rahul kothari</div>
+          </div>
         </div>
-        <div style={{ fontSize: "clamp(64px, 18vw, 96px)", lineHeight: 1.05 }} className="font-mono-display accent-text">{v.score}<span style={{ fontSize: "clamp(24px, 6vw, 32px)", color: "var(--text-secondary)" }}>/100</span></div>
-        <div style={{ fontSize: "clamp(20px, 5vw, 28px)", color: "var(--accent-secondary)" }}>“{v.title}” · better than {session.percentile}% of players</div>
-        <p style={{ marginTop: 24, fontSize: "clamp(17px, 4.5vw, 20px)", lineHeight: 1.45 }}>AXIOM: “{v.roast}”</p>
+
+        {/* score dump */}
+        <div style={{ padding: "clamp(20px, 5vw, 32px)" }}>
+          <div style={{ fontSize: "clamp(72px, 20vw, 110px)", lineHeight: 1, fontWeight: 700 }} className="accent-text glow">
+            {v.score}<span style={{ fontSize: "clamp(24px, 6vw, 36px)", color: "var(--text-secondary)", fontWeight: 400 }}>/100</span>
+          </div>
+          <div style={{ fontSize: "clamp(20px, 5vw, 28px)", color: "var(--accent-secondary)", marginTop: 8 }}>
+            &quot;{v.title}&quot; · better than {session.percentile}% of players
+          </div>
+
+          {/* roast */}
+          <div style={{ marginTop: 24, padding: "14px 16px", background: "var(--bg-primary)", borderRadius: 8, borderLeft: "3px solid var(--accent-secondary)" }}>
+            <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6 }}>axiom.verdict.roast &gt;</div>
+            <p style={{ fontSize: "clamp(15px, 4vw, 18px)", lineHeight: 1.5, margin: 0 }}>&quot;{v.roast}&quot;</p>
+          </div>
+
+          {/* best/worst */}
+          <div style={{ marginTop: 16, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div style={{ fontSize: 13 }}>
+              <div style={{ color: "var(--accent-primary)", fontSize: 11, marginBottom: 4 }}>best_line &gt;</div>
+              &quot;{v.bestLine}&quot;
+            </div>
+            <div style={{ fontSize: 13 }}>
+              <div style={{ color: "var(--accent-danger)", fontSize: 11, marginBottom: 4 }}>worst_line &gt;</div>
+              &quot;{v.worstLine}&quot;
+            </div>
+          </div>
+        </div>
       </div>
+
+      {/* share + CTA */}
       <ShareButtons shareUrl={shareUrl} postText={postText} />
-      <div style={{ marginTop: 28, textAlign: "center" }}>
-        <Link href="/" className="accent-text font-mono-display" style={{ fontSize: 22 }}>→ Think you can beat me? Take the duel</Link>
+      <div style={{ marginTop: 24, textAlign: "center" }}>
+        <Link href="/" className="accent-text" style={{ fontSize: 16 }}>$ ./start-duel — try again</Link>
       </div>
     </main>
   );
