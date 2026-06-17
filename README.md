@@ -1,6 +1,6 @@
 # Beat AXIOM
 
-A single-player, ~5-minute AI sales duel. You get one fictional buyer, ~7 messages, and one shot to win the deal — then **AXIOM**, an AI evaluator built and trained by Rahul Kothari, scores you, roasts you, and hands you a shareable scorecard. Built to be played solo on the web and shared on LinkedIn.
+A single-player AI sales duel — one fictional buyer, seven questions, one shot to win the deal. Then **AXIOM**, an AI evaluator built by Rahul Kothari, scores you, roasts you, and hands you a shareable scorecard. Built to be played solo on the web and shared on LinkedIn.
 
 > Spun out of "The Deal" — an in-room, 5-team offsite sales game — distilled into a solo, async, public experience with neutral (non-payments) sales scenarios.
 

@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SCENARIOS, SCENARIO_IDS } from "@/lib/duel/scenarios";
 import { MAX_PLAYER_TURNS, MAX_MESSAGE_CHARS } from "@/lib/duel/config";
 import { DuelMessage, ScenarioId } from "@/lib/duel/types";
+import { sfx, isMuted, setMuted } from "@/lib/duel/sfx";
+import { useSpeech } from "@/lib/duel/useSpeech";
 
 type Phase = "pick" | "play" | "scoring";
 
@@ -16,9 +18,22 @@ export default function DuelClient() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [muted, setMutedState] = useState(false);
+
+  const speech = useSpeech((t) => setInput(t.slice(0, MAX_MESSAGE_CHARS)));
+
+  useEffect(() => {
+    setMutedState(isMuted());
+  }, []);
 
   const turnsUsed = history.filter((m) => m.role === "player").length;
   const scenario = scenarioId ? SCENARIOS[scenarioId] : null;
+
+  function toggleMute() {
+    const next = !muted;
+    setMuted(next);
+    setMutedState(next);
+  }
 
   function start(id: ScenarioId) {
     setScenarioId(id);
@@ -28,8 +43,10 @@ export default function DuelClient() {
 
   async function send() {
     if (!scenarioId || !input.trim() || busy) return;
+    if (speech.listening) speech.toggle();
     setBusy(true);
     setError(null);
+    sfx.send();
     try {
       const res = await fetch("/api/duel/avatar", {
         method: "POST",
@@ -40,6 +57,7 @@ export default function DuelClient() {
       if (!res.ok) throw new Error(data.error ?? "request failed");
       setHistory((h) => [...h, data.playerMessage, data.buyerMessage]);
       setInput("");
+      sfx.reply();
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -49,6 +67,7 @@ export default function DuelClient() {
 
   async function getVerdict() {
     if (!scenarioId || busy) return;
+    if (speech.listening) speech.toggle();
     setBusy(true);
     setError(null);
     setPhase("scoring");
@@ -69,16 +88,31 @@ export default function DuelClient() {
     }
   }
 
+  const muteBtn = (
+    <button
+      onClick={toggleMute}
+      aria-label={muted ? "Unmute sound" : "Mute sound"}
+      style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-secondary)", fontSize: 20, padding: 4 }}
+    >
+      {muted ? "🔇" : "🔊"}
+    </button>
+  );
+
+  const wrap: React.CSSProperties = { maxWidth: 720, margin: "0 auto", padding: "clamp(20px, 5vw, 40px)", width: "100%", boxSizing: "border-box" };
+
   if (phase === "pick") {
     return (
-      <main style={{ maxWidth: 720, margin: "0 auto", padding: 48 }}>
-        <h1 className="font-mono-display accent-text" style={{ fontSize: 36 }}>Pick your fight</h1>
-        <p style={{ color: "var(--text-secondary)" }}>One buyer. ~{MAX_PLAYER_TURNS} messages. Win the deal.</p>
-        <div style={{ display: "grid", gap: 16, marginTop: 24 }}>
+      <main style={wrap}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <h1 className="font-mono-display accent-text" style={{ fontSize: "clamp(26px, 6vw, 36px)" }}>Pick your fight</h1>
+          {muteBtn}
+        </div>
+        <p style={{ color: "var(--text-secondary)" }}>One buyer. {MAX_PLAYER_TURNS} questions. Win the deal.</p>
+        <div style={{ display: "grid", gap: 14, marginTop: 24 }}>
           {SCENARIO_IDS.map((id) => (
-            <button key={id} onClick={() => start(id)} className="surface" style={{ textAlign: "left", padding: 20, borderRadius: 10, cursor: "pointer", color: "var(--text-primary)" }}>
-              <div className="font-mono-display" style={{ fontSize: 22 }}>{SCENARIOS[id].title}</div>
-              <div style={{ color: "var(--text-secondary)", marginTop: 6 }}>{SCENARIOS[id].setup}</div>
+            <button key={id} onClick={() => start(id)} className="surface" style={{ textAlign: "left", padding: 18, borderRadius: 10, cursor: "pointer", color: "var(--text-primary)" }}>
+              <div className="font-mono-display" style={{ fontSize: "clamp(18px, 4.5vw, 22px)" }}>{SCENARIOS[id].title}</div>
+              <div style={{ color: "var(--text-secondary)", marginTop: 6, fontSize: 15 }}>{SCENARIOS[id].setup}</div>
             </button>
           ))}
         </div>
@@ -89,15 +123,16 @@ export default function DuelClient() {
   const canSend = turnsUsed < MAX_PLAYER_TURNS;
 
   return (
-    <main style={{ maxWidth: 720, margin: "0 auto", padding: 32 }}>
-      <div className="font-mono-display" style={{ color: "var(--text-secondary)" }}>
-        {scenario?.title} · selling {scenario?.product} · {turnsUsed}/{MAX_PLAYER_TURNS} messages
+    <main style={wrap}>
+      <div className="font-mono-display" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, color: "var(--text-secondary)", fontSize: "clamp(12px, 3.2vw, 14px)" }}>
+        <span>{scenario?.title} · {turnsUsed}/{MAX_PLAYER_TURNS} questions</span>
+        {muteBtn}
       </div>
       <div style={{ margin: "16px 0", display: "flex", flexDirection: "column", gap: 12 }}>
         {history.map((m, i) => (
-          <div key={i} className={m.role === "player" ? "" : "surface"} style={{ padding: 12, borderRadius: 8, alignSelf: m.role === "player" ? "flex-end" : "flex-start", maxWidth: "85%", background: m.role === "player" ? "var(--accent-secondary)" : undefined }}>
-            <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>{m.role === "player" ? "You" : scenario?.buyer.name}</div>
-            <div>{m.content}</div>
+          <div key={i} className={m.role === "player" ? "" : "surface"} style={{ padding: 12, borderRadius: 10, alignSelf: m.role === "player" ? "flex-end" : "flex-start", maxWidth: "88%", background: m.role === "player" ? "var(--accent-secondary)" : undefined }}>
+            <div style={{ fontSize: 12, color: m.role === "player" ? "rgba(255,255,255,0.7)" : "var(--text-secondary)" }}>{m.role === "player" ? "You" : scenario?.buyer.name}</div>
+            <div style={{ fontSize: 16, lineHeight: 1.4 }}>{m.content}</div>
           </div>
         ))}
         {busy && phase === "play" && <div style={{ color: "var(--text-secondary)" }}>…thinking</div>}
@@ -105,23 +140,39 @@ export default function DuelClient() {
       </div>
       {error && <div className="danger-text" style={{ marginBottom: 12 }}>{error}</div>}
       {canSend ? (
-        <div style={{ display: "flex", gap: 8 }}>
-          <input
-            value={input}
-            maxLength={MAX_MESSAGE_CHARS}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && send()}
-            placeholder="Ask a sharp question…"
-            disabled={busy}
-            style={{ flex: 1, padding: 12, background: "var(--bg-surface)", border: "1px solid var(--border)", color: "var(--text-primary)", borderRadius: 8 }}
-          />
-          <button onClick={send} disabled={busy} className="accent-text surface" style={{ padding: "12px 20px", borderRadius: 8, cursor: "pointer" }}>Send</button>
-        </div>
+        <>
+          <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
+            <input
+              value={input}
+              maxLength={MAX_MESSAGE_CHARS}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && send()}
+              placeholder={speech.listening ? "Listening… speak now" : "Ask a sharp question…"}
+              disabled={busy}
+              style={{ flex: 1, minWidth: 0, padding: 14, fontSize: 16, background: "var(--bg-surface)", border: `1px solid ${speech.listening ? "var(--accent-primary)" : "var(--border)"}`, color: "var(--text-primary)", borderRadius: 10 }}
+            />
+            {speech.supported && (
+              <button
+                onClick={() => speech.toggle()}
+                disabled={busy}
+                aria-label={speech.listening ? "Stop voice input" : "Speak your question"}
+                title="Speak instead of typing"
+                style={{ padding: "0 16px", borderRadius: 10, cursor: "pointer", fontSize: 20, border: "1px solid var(--border)", background: speech.listening ? "var(--accent-danger)" : "var(--bg-surface)", color: speech.listening ? "#fff" : "var(--text-primary)" }}
+              >
+                🎤
+              </button>
+            )}
+            <button onClick={send} disabled={busy} className="accent-text surface" style={{ padding: "0 20px", borderRadius: 10, cursor: "pointer", fontSize: 16, fontWeight: 600 }}>Send</button>
+          </div>
+          <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 6 }}>
+            {speech.supported ? "Type or tap 🎤 to speak." : "Type your question."} {input.length}/{MAX_MESSAGE_CHARS}
+          </div>
+        </>
       ) : (
-        <div style={{ color: "var(--text-secondary)" }}>Out of messages.</div>
+        <div style={{ color: "var(--text-secondary)" }}>Out of questions.</div>
       )}
       {turnsUsed >= 2 && (
-        <button onClick={getVerdict} disabled={busy} className="font-mono-display" style={{ marginTop: 16, padding: "12px 20px", borderRadius: 8, background: "var(--accent-primary)", color: "#04110b", border: "none", cursor: "pointer", fontSize: 16 }}>
+        <button onClick={getVerdict} disabled={busy} className="font-mono-display" style={{ marginTop: 16, padding: "14px 22px", borderRadius: 10, background: "var(--accent-primary)", color: "#04110b", border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700, width: "100%", maxWidth: 280 }}>
           Face AXIOM →
         </button>
       )}

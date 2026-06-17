@@ -11,7 +11,7 @@ export function buildShareText(verdict: Verdict, shareUrl: string): string {
     "",
     `Its verdict: "${snippet}"`,
     "",
-    `Think you can beat me? Take the 5-minute duel 👇`,
+    `Think you can beat me? 7 questions, one shot 👇`,
     shareUrl,
   ].join("\n");
 }

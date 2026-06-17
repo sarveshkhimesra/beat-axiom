@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { sfx } from "@/lib/duel/sfx";
 
 /** Share bar for a scorecard. LinkedIn can only take a URL (it unfurls into the
  * OG card), so the @Rahul caption is copied to the clipboard for the user to
@@ -14,6 +15,11 @@ export default function ShareButtons({
 }) {
   const [copied, setCopied] = useState(false);
   const [hint, setHint] = useState<string | null>(null);
+
+  // Dramatic chime when the verdict scorecard appears.
+  useEffect(() => {
+    sfx.reveal();
+  }, []);
 
   const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
   const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(postText)}`;

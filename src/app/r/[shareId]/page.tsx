@@ -44,14 +44,14 @@ export default async function ScorecardPage({ params }: { params: { shareId: str
   const shareUrl = `${baseUrl()}/r/${session.shareId}`;
   const postText = buildShareText(v, shareUrl);
   return (
-    <main style={{ maxWidth: 720, margin: "0 auto", padding: 48 }}>
-      <div className="surface" style={{ padding: 32, borderRadius: 12 }}>
-        <div style={{ color: "var(--text-secondary)" }} className="font-mono-display">
+    <main style={{ maxWidth: 720, margin: "0 auto", padding: "clamp(20px, 5vw, 48px)", width: "100%", boxSizing: "border-box" }}>
+      <div className="surface" style={{ padding: "clamp(20px, 5vw, 32px)", borderRadius: 12 }}>
+        <div style={{ color: "var(--text-secondary)", fontSize: "clamp(12px, 3.2vw, 15px)" }} className="font-mono-display">
           BEAT AXIOM · {session.scenarioTitle} · an AI by Rahul Kothari
         </div>
-        <div style={{ fontSize: 96 }} className="font-mono-display accent-text">{v.score}<span style={{ fontSize: 32, color: "var(--text-secondary)" }}>/100</span></div>
-        <div style={{ fontSize: 28, color: "var(--accent-secondary)" }}>“{v.title}” · better than {session.percentile}% of players</div>
-        <p style={{ marginTop: 24, fontSize: 20 }}>AXIOM: “{v.roast}”</p>
+        <div style={{ fontSize: "clamp(64px, 18vw, 96px)", lineHeight: 1.05 }} className="font-mono-display accent-text">{v.score}<span style={{ fontSize: "clamp(24px, 6vw, 32px)", color: "var(--text-secondary)" }}>/100</span></div>
+        <div style={{ fontSize: "clamp(20px, 5vw, 28px)", color: "var(--accent-secondary)" }}>“{v.title}” · better than {session.percentile}% of players</div>
+        <p style={{ marginTop: 24, fontSize: "clamp(17px, 4.5vw, 20px)", lineHeight: 1.45 }}>AXIOM: “{v.roast}”</p>
       </div>
       <ShareButtons shareUrl={shareUrl} postText={postText} />
       <div style={{ marginTop: 28, textAlign: "center" }}>
