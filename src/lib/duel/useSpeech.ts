@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { combineSegments, committedText, liveText } from "./transcript";
 
 /**
  * Robust speech-to-text hook with continuous capture + append behavior.
@@ -13,6 +14,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
  *   we restart transparently if the user hasn't explicitly paused).
  * - `pause()` = stop mic, keep all captured text intact.
  * - `toggle()` = start/pause.
+ *
+ * CRITICAL invariant — no feedback loop:
+ * The text that existed before the current speaking session ("base") is a
+ * SNAPSHOT captured once in start(). We never read our own onText() output
+ * back in as the base. Doing so (the previous bug) caused runaway duplication:
+ * each recognition event re-appended the whole accumulated transcript onto a
+ * base that already contained it, producing "...quickhi I want to have a
+ * quickhi I want to have a quick discussionhi...".
  */
 export function useSpeech(opts: {
   /** Current input value — new speech is appended after this. */
@@ -26,9 +35,16 @@ export function useSpeech(opts: {
 
   // Track whether the user has intentionally paused (vs browser auto-ending).
   const intentionalStop = useRef(false);
-  // Ref to the latest currentText so the append logic always reads fresh state.
-  const baseText = useRef(opts.currentText);
-  baseText.current = opts.currentText;
+  // Latest external text — read ONLY when a new session starts, never used as
+  // the running base during a session (that would create a feedback loop).
+  const latestText = useRef(opts.currentText);
+  latestText.current = opts.currentText;
+  // Snapshot of text that existed before the current speaking session begins.
+  const baseSnapshot = useRef("");
+  // Finalized transcript accumulated across the current speaking session
+  // (survives browser auto-restarts; reset on intentional start/pause).
+  const sessionFinalized = useRef("");
+
   const onText = useRef(opts.onText);
   onText.current = opts.onText;
 
@@ -50,54 +66,54 @@ export function useSpeech(opts: {
     rec.continuous = true;
     rec.maxAlternatives = 1;
 
-    // Track finalized text accumulated THIS session (between start/pause).
-    let sessionFinalized = "";
+    // Holds the current rec instance's finalized text, folded into the
+    // session accumulator on (auto-)restart so e.results resetting is safe.
+    let pendingInstanceFinal = "";
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rec.onresult = (e: any) => {
-      let finalized = "";
-      let interimPart = "";
+      // In continuous mode `e.results` holds every result for THIS recognition
+      // instance from index 0. Recompute the full final/interim split each time;
+      // this instance's finalized text fully replaces (not appends to) the
+      // per-instance accumulator.
+      const segments = [];
       for (let i = 0; i < e.results.length; i++) {
-        const transcript = e.results[i][0].transcript;
-        if (e.results[i].isFinal) {
-          finalized += transcript;
-        } else {
-          interimPart += transcript;
-        }
+        segments.push({ transcript: e.results[i][0].transcript, isFinal: e.results[i].isFinal });
       }
-      sessionFinalized = finalized;
+      const { finalized, interim: interimPart } = combineSegments(segments);
+
       setInterim(interimPart);
 
-      // Build the full text: what was in the box before + finalized speech + interim preview
-      const base = baseText.current;
-      const separator = base && !base.endsWith(" ") ? " " : "";
-      const fullText = base + separator + (sessionFinalized + " " + interimPart).trim();
-      onText.current(fullText);
+      // Always derive from the immutable base snapshot — never from our own output.
+      onText.current(liveText(baseSnapshot.current, sessionFinalized.current, finalized, interimPart));
+
+      // Stash this instance's finalized text so an auto-restart preserves it.
+      pendingInstanceFinal = finalized;
     };
 
     rec.onend = () => {
-      // Commit any finalized text permanently into the input (drop interim).
-      if (sessionFinalized) {
-        const base = baseText.current;
-        // The onresult handler already pushed text, but let's make sure the
-        // final commit is clean (no trailing interim artifacts).
-        const separator = base && !base.endsWith(" ") ? " " : "";
-        const committed = base + separator + sessionFinalized.trim();
-        onText.current(committed);
-        // Update baseText so the next restart appends correctly.
-        baseText.current = committed;
-        sessionFinalized = "";
-      }
+      // Fold this instance's finalized text into the session accumulator and
+      // commit clean text (no interim artifacts) to the input.
+      const committed = committedText(baseSnapshot.current, sessionFinalized.current, pendingInstanceFinal);
+      sessionFinalized.current = committedText("", sessionFinalized.current, pendingInstanceFinal);
+      pendingInstanceFinal = "";
+      onText.current(committed);
       setInterim("");
 
-      // Auto-restart if the browser killed us (timeout/silence) but user didn't pause.
       if (!intentionalStop.current) {
+        // Browser killed us (timeout/silence) but the user didn't pause.
+        // e.results will reset on restart — the session accumulator above
+        // already captured what we had, so restarting appends cleanly.
         try {
           rec.start();
         } catch {
           setListening(false);
         }
       } else {
+        // Intentional pause: lock the committed text in as the new base so a
+        // later resume appends after it.
+        baseSnapshot.current = committed;
+        sessionFinalized.current = "";
         setListening(false);
       }
     };
@@ -117,6 +133,9 @@ export function useSpeech(opts: {
     const rec = recRef.current;
     if (!rec || listening) return;
     intentionalStop.current = false;
+    // Snapshot the text that exists right now; new speech appends after it.
+    baseSnapshot.current = latestText.current;
+    sessionFinalized.current = "";
     try {
       rec.start();
       setListening(true);
