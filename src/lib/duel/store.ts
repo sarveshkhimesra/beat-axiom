@@ -1,20 +1,14 @@
 import { Redis } from "@upstash/redis";
 import { nanoid } from "nanoid";
-import { DuelSession, ScenarioId, Verdict } from "./types";
+import { DuelSession, TemplateId, V2Verdict } from "./types";
 import { percentileFromRank } from "./percentile";
 
 const hasRedis = !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
 
 const redis = hasRedis
-  ? new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL!,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-    })
+  ? new Redis({ url: process.env.UPSTASH_REDIS_REST_URL!, token: process.env.UPSTASH_REDIS_REST_TOKEN! })
   : null;
 
-// In-memory fallback for local dev when Upstash isn't configured. Stashed on
-// globalThis so it survives Next's per-route module instances within a single
-// dev process. Not durable (resets on restart) — never used when Redis present.
 const g = globalThis as unknown as {
   __duelMem?: { sessions: Map<string, DuelSession>; scores: Record<string, number[]> };
 };
@@ -23,14 +17,12 @@ const memSessions = mem.sessions;
 const memScores = mem.scores;
 
 const sessionKey = (id: string) => `duel:session:${id}`;
-const scoresKey = (scenarioId: ScenarioId) => `duel:scores:${scenarioId}`;
+const scoresKey = (templateId: TemplateId) => `duel:scores:${templateId}`;
 
-/** Persist a completed duel: record score in the per-scenario distribution,
- * compute percentile, save the session. Returns the saved session. */
 export async function saveSession(args: {
-  scenarioId: ScenarioId;
+  templateId: TemplateId;
   scenarioTitle: string;
-  verdict: Verdict;
+  verdict: V2Verdict;
 }): Promise<DuelSession> {
   const shareId = nanoid(10);
   const score = args.verdict.score;
@@ -38,12 +30,12 @@ export async function saveSession(args: {
   let total: number;
   let rankBelow: number;
   if (redis) {
-    const zkey = scoresKey(args.scenarioId);
+    const zkey = scoresKey(args.templateId);
     await redis.zadd(zkey, { score, member: shareId });
     total = await redis.zcard(zkey);
     rankBelow = await redis.zcount(zkey, 0, score - 1);
   } else {
-    const arr = (memScores[args.scenarioId] ??= []);
+    const arr = (memScores[args.templateId] ??= []);
     arr.push(score);
     total = arr.length;
     rankBelow = arr.filter((s) => s < score).length;
@@ -52,14 +44,13 @@ export async function saveSession(args: {
 
   const session: DuelSession = {
     shareId,
-    scenarioId: args.scenarioId,
+    templateId: args.templateId,
     scenarioTitle: args.scenarioTitle,
     verdict: args.verdict,
     percentile,
     createdAt: Date.now(),
   };
   if (redis) {
-    // 90-day TTL on the shareable card.
     await redis.set(sessionKey(shareId), session, { ex: 60 * 60 * 24 * 90 });
   } else {
     memSessions.set(shareId, session);
