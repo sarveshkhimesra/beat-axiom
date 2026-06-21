@@ -50,7 +50,6 @@ See [`docs/AXIOM-Rating-Mechanism.md`](docs/AXIOM-Rating-Mechanism.md) for the f
 | Layer | Technology |
 |---|---|
 | Framework | Next.js 14 (App Router) |
-| AI | Anthropic Claude (via any OpenAI-compatible proxy, direct API, or Azure) |
 | State | Upstash Redis (sessions + rate-limiting) — optional in dev (falls back to in-memory) |
 | OG images | @vercel/og |
 | Abuse protection | Cloudflare Turnstile (optional) + IP rate-limiting |
@@ -63,7 +62,6 @@ See [`docs/AXIOM-Rating-Mechanism.md`](docs/AXIOM-Rating-Mechanism.md) for the f
 ### Prerequisites
 
 - Node.js 18+
-- An Anthropic-compatible API endpoint (direct Anthropic, Azure, LiteLLM, OpenRouter, etc.)
 
 ### Install & run
 
@@ -90,9 +88,6 @@ AZURE_ANTHROPIC_ENDPOINT=https://your-resource.services.ai.azure.com/anthropic/
 AZURE_ANTHROPIC_API_KEY=your-key
 AZURE_ANTHROPIC_MODEL=your-deployment-name
 
-# Option C: LiteLLM / OpenAI-compatible proxy
-LITELLM_BASE_URL=https://your-proxy.example.com
-LITELLM_API_KEY=your-key
 ```
 
 Redis is **optional for local dev** — without Upstash keys, sessions are stored in-memory (reset on restart). For production, add:
@@ -117,7 +112,6 @@ src/
 ├── components/
 │   └── AxiomAvatar.tsx       Animated geometric AI avatar (SVG)
 └── lib/
-    ├── anthropic.ts          AI client (multi-provider: LiteLLM → Azure → direct)
     └── duel/
         ├── types.ts          Domain types
         ├── scenarios.ts      The 3 scenarios (data)

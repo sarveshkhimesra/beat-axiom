@@ -25,7 +25,7 @@ The app is a Next.js 14 App Router project. Key areas:
 - **`src/lib/duel/`** — all game logic (pure TypeScript, no framework dependency). This is where scenarios, prompts, scoring, and session management live.
 - **`src/app/api/duel/`** — two API routes: `avatar` (buyer conversation turn) and `verdict` (AXIOM scoring).
 - **`src/app/`** — pages (landing, duel play, scorecard, OG image).
-- **`src/lib/anthropic.ts`** — the AI client. Supports three providers (LiteLLM proxy, Azure, direct Anthropic) via a priority cascade.
+- **`src/lib/anthropic.ts`** — the AI client. Supports Azure-hosted Anthropic and direct Anthropic API.
 
 ## Adding a scenario
 
