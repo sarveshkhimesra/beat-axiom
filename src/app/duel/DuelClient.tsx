@@ -288,6 +288,12 @@ export default function DuelClient() {
                 <div style={{ color: "var(--text-secondary)", fontSize: 11 }}>{scenario.title}</div>
               </div>
             </div>
+            <div style={{ background: "var(--bg-primary)", borderRadius: 8, padding: "16px 18px", marginBottom: 14, borderLeft: "3px solid var(--accent-secondary)" }}>
+              <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 8 }}>your_product &gt;</div>
+              <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 6 }}>{scenario.product}</div>
+              <div style={{ fontSize: 13, color: "var(--text-primary)", marginBottom: 6 }}><span style={{ color: "var(--accent-primary)" }}>strength:</span> {scenario.sellerStrength}</div>
+              <div style={{ fontSize: 13, color: "var(--text-primary)" }}><span style={{ color: "var(--accent-danger)" }}>weakness:</span> {scenario.sellerWeakness}</div>
+            </div>
             <div style={{ background: "var(--bg-primary)", borderRadius: 8, padding: "16px 18px", marginBottom: 20, borderLeft: "3px solid var(--accent-primary)" }}>
               <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 8 }}>buyer_profile &gt;</div>
               <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{scenario.buyerName}</div>
@@ -327,8 +333,14 @@ export default function DuelClient() {
                 <span className="accent-text" style={{ fontSize: 13, fontWeight: 700 }}>DOSSIER</span>
                 <button onClick={() => setShowBrief(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-secondary)", fontSize: 18 }}>✕</button>
               </div>
+              <div style={{ marginBottom: 16, padding: "12px 14px", background: "var(--bg-primary)", borderRadius: 6, borderLeft: "2px solid var(--accent-secondary)" }}>
+                <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6 }}>your_product &gt;</div>
+                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>{scenario.product}</div>
+                <div style={{ fontSize: 12, color: "var(--text-primary)" }}><span style={{ color: "var(--accent-primary)" }}>+</span> {scenario.sellerStrength}</div>
+                <div style={{ fontSize: 12, color: "var(--text-primary)" }}><span style={{ color: "var(--accent-danger)" }}>-</span> {scenario.sellerWeakness}</div>
+              </div>
               <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{scenario.buyerName}</div>
-              <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 16 }}>{scenario.buyerRole} · {scenario.companyName}</div>
+              <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 12 }}>{scenario.buyerRole} · {scenario.companyName}</div>
               <pre style={{ fontSize: 12, lineHeight: 1.6, margin: 0, whiteSpace: "pre-wrap", fontFamily: "inherit", color: "var(--text-secondary)" }}>
                 {scenario.brief}
               </pre>
