@@ -31,15 +31,25 @@ Return ONLY a JSON object (no markdown fences, no prose):
 
   const completion = await anthropicClient.messages.create({
     model: VARIATOR_MODEL,
-    max_tokens: 600,
+    max_tokens: 1200,
     messages: [{ role: "user", content: prompt }],
   });
 
   const raw = extractText(completion);
+  console.log("[variator] raw response length:", raw.length, "first 200 chars:", raw.slice(0, 200));
   const start = raw.indexOf("{");
   const end = raw.lastIndexOf("}");
-  if (start === -1 || end === -1) throw new Error("variator returned no JSON");
-  const generated = JSON.parse(raw.slice(start, end + 1));
+  if (start === -1 || end === -1) {
+    console.error("[variator] no JSON found in response. Full response:", raw);
+    throw new Error("variator returned no JSON");
+  }
+  let generated;
+  try {
+    generated = JSON.parse(raw.slice(start, end + 1));
+  } catch (parseErr) {
+    console.error("[variator] JSON parse failed:", (parseErr as Error).message, "slice:", raw.slice(start, start + 300));
+    throw new Error("variator returned invalid JSON");
+  }
 
   return {
     templateId: template.id,
