@@ -4,6 +4,7 @@ import { getTemplate } from "@/lib/duel/templates";
 import { generateScenario } from "@/lib/duel/variator";
 import { TemplateId, ClientScenario } from "@/lib/duel/types";
 import { createGame } from "@/lib/duel/gameStore";
+import { checkTurnLimit, clientIp, verifyTurnstile } from "@/lib/duel/ratelimit";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -11,12 +12,20 @@ export const maxDuration = 30;
 interface Body {
   templateId: TemplateId;
   filters?: { industry?: string };
+  turnstileToken?: string;
 }
 
 export async function POST(req: NextRequest) {
   if (DUEL_PAUSED) return NextResponse.json({ error: "AXIOM is resting." }, { status: 503 });
 
+  const ip = clientIp(req);
   const body = (await req.json()) as Body;
+
+  if (!(await verifyTurnstile(body.turnstileToken, ip))) {
+    return NextResponse.json({ error: "verification failed" }, { status: 403 });
+  }
+  const rl = await checkTurnLimit(ip);
+  if (!rl.success) return NextResponse.json({ error: "slow down — too many games started" }, { status: 429 });
   if (!body.templateId) return NextResponse.json({ error: "templateId required" }, { status: 400 });
 
   let template;
