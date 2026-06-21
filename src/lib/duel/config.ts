@@ -4,16 +4,21 @@
 const DEFAULT_MODEL =
   process.env.ANTHROPIC_MODEL ?? process.env.AZURE_ANTHROPIC_MODEL ?? "claude-sonnet-4-6";
 
-/** Cheap/fast model for the many buyer turns. */
 export const AVATAR_MODEL = process.env.DUEL_AVATAR_MODEL ?? DEFAULT_MODEL;
-/** Stronger model for the single AXIOM verdict call. */
 export const VERDICT_MODEL = process.env.DUEL_VERDICT_MODEL ?? DEFAULT_MODEL;
+export const VARIATOR_MODEL = process.env.DUEL_VARIATOR_MODEL ?? DEFAULT_MODEL;
 
-/** Max player turns per duel — bounds API cost per session. */
-export const MAX_PLAYER_TURNS = 7;
-/** Max characters per player message (no limit — players speak/type freely). */
-export const MAX_MESSAGE_CHARS = Infinity;
-/** Rahul's LinkedIn handle text, pre-typed into share copy. */
+/** Soft max turns — buyer wraps up naturally after this. */
+export const SOFT_MAX_TURNS = 20;
+/** Impatience increase when player is silent > 90s. */
+export const SILENCE_IMPATIENCE = 0.15;
+/** Turns in one stage before impatience ticks up. */
+export const STAGE_STALL_THRESHOLD = 6;
+/** Impatience per turn past the stall threshold. */
+export const STALL_IMPATIENCE = 0.08;
+
 export const RAHUL_MENTION = "@Rahul Kothari";
-/** Kill switch: when "true", the duel is paused. */
 export const DUEL_PAUSED = process.env.DUEL_PAUSED === "true";
+
+/** The delimiter the buyer prompt uses to separate conversation from metadata. */
+export const META_DELIMITER = "---AXIOM_META---";
