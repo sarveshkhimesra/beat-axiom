@@ -1,12 +1,13 @@
-import { anthropicClient, extractText } from "@/lib/anthropic";
-import { VARIATOR_MODEL } from "./config";
+import { chatCompletion } from "@/lib/openai";
 import { GeneratedScenario, ScenarioTemplate } from "./types";
 
 export async function generateScenario(
   template: ScenarioTemplate,
   filters?: { industry?: string }
 ): Promise<GeneratedScenario> {
-  const prompt = `Generate a sales scenario variation. Use the template below as the STRUCTURAL foundation (hidden priority, objection, personality, difficulty). Generate FRESH surface details: a new company name, a 2-sentence backstory, a buyer name, specific pain-point numbers, a budget signal, and a product being sold. ${filters?.industry ? `Set in the ${filters.industry} industry.` : "Pick any B2B industry."}
+  const system = "You generate sales scenario variations. Return ONLY a JSON object, no markdown fences, no prose before or after.";
+
+  const user = `Generate a sales scenario variation. Use the template below as the STRUCTURAL foundation (hidden priority, objection, personality, difficulty). Generate FRESH surface details: a new company name, a 2-sentence backstory, a buyer name, specific pain-point numbers, a budget signal, and a product being sold. ${filters?.industry ? `Set in the ${filters.industry} industry.` : "Pick any B2B industry."}
 
 TEMPLATE:
 - Archetype: ${template.archetype}
@@ -16,38 +17,33 @@ TEMPLATE:
 - Signature objection: ${template.signatureObjection}
 - Variation instructions: ${template.variationPrompt}
 
-Return ONLY a JSON object (no markdown fences, no prose):
+Return ONLY this JSON:
 {
   "companyName": "<invented company name>",
   "backstory": "<2 sentences about the company>",
   "buyerName": "<full name>",
-  "product": "<what the player is selling>",
+  "product": "<what the player is selling — include the product name and a one-line description>",
   "sellerStrength": "<one specific strength>",
   "sellerWeakness": "<one specific weakness>",
-  "surfacePains": ["<pain 1>", "<pain 2>", "<pain 3>"],
-  "budgetSignal": "<1 sentence about budget availability>",
-  "brief": "<4-5 sentence player-facing brief explaining the situation>"
+  "surfacePains": ["<pain 1 with a specific number>", "<pain 2 with a metric>", "<pain 3>"],
+  "budgetSignal": "<1 sentence>",
+  "brief": "<4-5 sentence player-facing brief explaining: what you're selling, who to, what their situation is, and what your goal is>"
 }`;
 
-  const completion = await anthropicClient.messages.create({
-    model: VARIATOR_MODEL,
-    max_tokens: 1200,
-    messages: [{ role: "user", content: prompt }],
-  });
+  const raw = await chatCompletion({ system, user, maxTokens: 800 });
+  console.log("[variator] response length:", raw.length);
 
-  const raw = extractText(completion);
-  console.log("[variator] raw response length:", raw.length, "first 200 chars:", raw.slice(0, 200));
   const start = raw.indexOf("{");
   const end = raw.lastIndexOf("}");
   if (start === -1 || end === -1) {
-    console.error("[variator] no JSON found in response. Full response:", raw);
+    console.error("[variator] no JSON found:", raw.slice(0, 200));
     throw new Error("variator returned no JSON");
   }
   let generated;
   try {
     generated = JSON.parse(raw.slice(start, end + 1));
   } catch (parseErr) {
-    console.error("[variator] JSON parse failed:", (parseErr as Error).message, "slice:", raw.slice(start, start + 300));
+    console.error("[variator] parse failed:", (parseErr as Error).message);
     throw new Error("variator returned invalid JSON");
   }
 
@@ -69,6 +65,6 @@ Return ONLY a JSON object (no markdown fences, no prose):
     budgetSignal: generated.budgetSignal ?? "Budget available for the right solution.",
     stageUnlockCriteria: template.stageUnlockCriteria,
     impatienceConfig: template.impatienceConfig,
-    brief: generated.brief ?? `You are selling ${generated.product ?? "a solution"} to ${generated.buyerName ?? "the buyer"} at ${generated.companyName ?? "a company"}.`,
+    brief: generated.brief ?? `You are selling to ${generated.buyerName ?? "the buyer"} at ${generated.companyName ?? "a company"}.`,
   };
 }

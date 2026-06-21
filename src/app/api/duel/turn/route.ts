@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { anthropicClient, extractText } from "@/lib/anthropic";
-import { AVATAR_MODEL, SOFT_MAX_TURNS, DUEL_PAUSED } from "@/lib/duel/config";
+import { chatCompletionWithHistory } from "@/lib/openai";
+import { SOFT_MAX_TURNS, DUEL_PAUSED } from "@/lib/duel/config";
 import { buildBuyerPrompt } from "@/lib/duel/buyerPrompt";
 import { parseResponse } from "@/lib/duel/parseMeta";
 import { checkTurnLimit, clientIp, verifyTurnstile } from "@/lib/duel/ratelimit";
@@ -63,13 +63,7 @@ export async function POST(req: NextRequest) {
   messages.push({ role: "user", content: message });
 
   try {
-    const completion = await anthropicClient.messages.create({
-      model: AVATAR_MODEL,
-      max_tokens: 600,
-      system,
-      messages,
-    });
-    const raw = extractText(completion);
+    const raw = await chatCompletionWithHistory({ system, messages, maxTokens: 600 });
     const { message: buyerText, meta } = parseResponse(raw);
     const now = Date.now();
 
