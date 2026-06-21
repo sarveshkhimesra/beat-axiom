@@ -1,36 +1,53 @@
-export type ScenarioId = "skeptical-vp" | "cutting-cfo" | "committee-gatekeeper";
+// src/lib/duel/types.ts — v2 domain types
 
-/** The buyer the player talks to (a single persona, AI-roleplayed). */
-export interface Buyer {
-  name: string;
-  role: string;
-  /** Public personality the player can infer. */
+export type Stage = "discovery" | "pitch" | "negotiate" | "close";
+export const STAGES: Stage[] = ["discovery", "pitch", "negotiate", "close"];
+
+export type TemplateId =
+  | "skeptical-vp"
+  | "cost-cutting-cfo"
+  | "committee-gatekeeper"
+  | "technical-blocker"
+  | "champion-no-power"
+  | "incumbent-defender"
+  | "speed-buyer"
+  | "multi-stakeholder";
+
+export interface ScenarioTemplate {
+  id: TemplateId;
+  archetype: string;
+  title: string;
+  description: string;
+  difficulty: 1 | 2 | 3;
+  buyerRole: string;
   personality: string;
-  /** Surface pains the buyer will share when asked reasonably. */
-  surfacePains: string[];
-  /** The buried priority — guarded; only revealed when earned. */
   hiddenPriority: string;
-  /** Topics that, when probed sharply & repeatedly, unlock the hidden priority. */
   hiddenPriorityHintTopics: string[];
-  /** The signature objection, landed partway through the duel. */
   signatureObjection: string;
-  /** Budget/urgency signal (never volunteer exact numbers). */
-  budgetSignal: string;
+  stageUnlockCriteria: Record<Stage, string>;
+  impatienceConfig: { baseRate: number; genericQuestionPenalty: number };
+  variationPrompt: string;
 }
 
-export interface Scenario {
-  id: ScenarioId;
-  /** Short title shown to the player + on the scorecard. */
+export interface GeneratedScenario {
+  templateId: TemplateId;
   title: string;
-  /** What the player is selling. */
+  companyName: string;
+  backstory: string;
+  buyerName: string;
+  buyerRole: string;
+  personality: string;
   product: string;
-  /** One strength the player should lean on. */
   sellerStrength: string;
-  /** One weakness the player should own. */
   sellerWeakness: string;
-  /** One-line setup shown before the duel starts. */
-  setup: string;
-  buyer: Buyer;
+  surfacePains: string[];
+  hiddenPriority: string;
+  hiddenPriorityHintTopics: string[];
+  signatureObjection: string;
+  budgetSignal: string;
+  stageUnlockCriteria: Record<Stage, string>;
+  impatienceConfig: { baseRate: number; genericQuestionPenalty: number };
+  brief: string;
 }
 
 export interface DuelMessage {
@@ -39,31 +56,57 @@ export interface DuelMessage {
   at: number;
 }
 
-export interface VerdictDimensions {
-  discovery: number;
-  signal: number;
-  objection: number;
-  value: number;
-  listening: number;
+export interface TurnMetadata {
+  currentStage: Stage;
+  stageJustUnlocked: Stage | null;
+  impatienceLevel: number;
+  gameOver: boolean;
+  gameOverReason: "closed" | "walkaway" | "soft-max" | null;
+  hookLine: string;
 }
 
-export interface Verdict {
-  score: number; // 0–100
+export interface StageScores {
+  discovery: Record<string, number>;
+  pitch: Record<string, number>;
+  negotiate: Record<string, number>;
+  close: Record<string, number>;
+}
+
+export interface V2Verdict {
+  score: number;
   title: string;
-  dimensions: VerdictDimensions;
+  stageScores: StageScores;
+  modifiers: {
+    efficiency: number;
+    hiddenPriority: number;
+    walkaway: boolean;
+    genericPenalty: number;
+    prematurePitch: number;
+  };
   bestLine: string;
   worstLine: string;
   roast: string;
+  stagesSummary: string;
   didDetectSignal: boolean;
-  didHandleObjection: boolean;
+  buyerWalkedAway: boolean;
 }
 
-/** A completed, persisted duel — the shareable artifact's data. */
 export interface DuelSession {
   shareId: string;
-  scenarioId: ScenarioId;
+  templateId: TemplateId;
   scenarioTitle: string;
-  verdict: Verdict;
-  percentile: number; // 0–100, computed at persist time
+  verdict: V2Verdict;
+  percentile: number;
   createdAt: number;
+}
+
+export interface PlayerProfile {
+  username: string;
+  games: Array<{
+    templateId: TemplateId;
+    score: number;
+    title: string;
+    date: number;
+    shareId: string;
+  }>;
 }
