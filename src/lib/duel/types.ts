@@ -50,6 +50,20 @@ export interface GeneratedScenario {
   brief: string;
 }
 
+/** The subset of scenario data safe to send to the client (no game secrets). */
+export interface ClientScenario {
+  gameId: string;
+  templateId: TemplateId;
+  title: string;
+  companyName: string;
+  buyerName: string;
+  buyerRole: string;
+  product: string;
+  sellerStrength: string;
+  sellerWeakness: string;
+  brief: string;
+}
+
 export interface DuelMessage {
   role: "player" | "buyer";
   content: string;

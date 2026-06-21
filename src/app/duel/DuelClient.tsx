@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Stage, TemplateId, GeneratedScenario, DuelMessage } from "@/lib/duel/types";
+import { Stage, TemplateId, ClientScenario, DuelMessage } from "@/lib/duel/types";
 import { TEMPLATES, TEMPLATE_IDS } from "@/lib/duel/templates";
 import { getPlayer, createPlayer, recordGame } from "@/lib/duel/player";
 import { sfx, isMuted, setMuted } from "@/lib/duel/sfx";
@@ -30,12 +30,13 @@ export default function DuelClient() {
   const [playerName, setPlayerName] = useState<string | null>(null);
 
   const [templateId, setTemplateId] = useState<TemplateId | null>(null);
-  const [scenario, setScenario] = useState<GeneratedScenario | null>(null);
+  // Only store client-safe scenario (no game secrets)
+  const [clientScenario, setClientScenario] = useState<ClientScenario | null>(null);
   const [loadingScenario, setLoadingScenario] = useState(false);
 
   const [history, setHistory] = useState<DuelMessage[]>([]);
   const [currentStage, setCurrentStage] = useState<Stage>("discovery");
-  const [stagesReached, setStagesReached] = useState<Stage[]>(["discovery"]);
+  const stagesNotified = useRef<Set<Stage>>(new Set<Stage>(["discovery"]));
   const [impatienceLevel, setImpatienceLevel] = useState(0);
   const [gameOver, setGameOver] = useState(false);
 
@@ -86,10 +87,11 @@ export default function DuelClient() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "start failed");
-      setScenario(data.scenario as GeneratedScenario);
+      // Receive only safe ClientScenario (gameId + visible fields)
+      setClientScenario(data.scenario as ClientScenario);
       setHistory([]);
       setCurrentStage("discovery");
-      setStagesReached(["discovery"]);
+      stagesNotified.current = new Set<Stage>(["discovery"]);
       setImpatienceLevel(0);
       setGameOver(false);
       setPhase("brief");
@@ -101,7 +103,7 @@ export default function DuelClient() {
   }
 
   async function send() {
-    if (!scenario || !input.trim() || busy || gameOver) return;
+    if (!clientScenario || !input.trim() || busy || gameOver) return;
     if (speech.listening) speech.pause();
     setBusy(true); setError(null); setHookLine(null); sfx.send();
     try {
@@ -109,11 +111,8 @@ export default function DuelClient() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
+          gameId: clientScenario.gameId,
           message: input.trim(),
-          history,
-          scenario,
-          currentStage,
-          impatienceLevel,
         }),
       });
       const data = await res.json();
@@ -129,11 +128,12 @@ export default function DuelClient() {
       if (typeof data.impatienceLevel === "number") setImpatienceLevel(data.impatienceLevel);
 
       if (stageJustUnlocked) {
-        setStageNotification(stageJustUnlocked as Stage);
-        setStagesReached((prev) =>
-          prev.includes(stageJustUnlocked as Stage) ? prev : [...prev, stageJustUnlocked as Stage]
-        );
-        setTimeout(() => setStageNotification(null), 3000);
+        const stage = stageJustUnlocked as Stage;
+        if (!stagesNotified.current.has(stage)) {
+          stagesNotified.current.add(stage);
+          setStageNotification(stage);
+          setTimeout(() => setStageNotification(null), 3000);
+        }
       }
 
       if (hl) setHookLine(hl);
@@ -150,13 +150,13 @@ export default function DuelClient() {
   }
 
   async function triggerVerdict() {
-    if (!scenario) return;
+    if (!clientScenario) return;
     setPhase("scoring");
     try {
       const res = await fetch("/api/duel/verdict", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ scenario, history, stagesReached }),
+        body: JSON.stringify({ gameId: clientScenario.gameId }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "verdict failed");
@@ -276,7 +276,7 @@ export default function DuelClient() {
   }
 
   // === BRIEF ===
-  if (phase === "brief" && scenario) {
+  if (phase === "brief" && clientScenario) {
     return (
       <main style={wrap}>
         <div className="terminal-window" style={{ padding: 0 }}>
@@ -285,21 +285,21 @@ export default function DuelClient() {
               <AxiomAvatar size={36} />
               <div>
                 <div className="accent-text" style={{ fontSize: 14, fontWeight: 700 }}>AXIOM // DOSSIER</div>
-                <div style={{ color: "var(--text-secondary)", fontSize: 11 }}>{scenario.title}</div>
+                <div style={{ color: "var(--text-secondary)", fontSize: 11 }}>{clientScenario.title}</div>
               </div>
             </div>
             <div style={{ background: "var(--bg-primary)", borderRadius: 8, padding: "16px 18px", marginBottom: 14, borderLeft: "3px solid var(--accent-secondary)" }}>
               <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 8 }}>your_product &gt;</div>
-              <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 6 }}>{scenario.product}</div>
-              <div style={{ fontSize: 13, color: "var(--text-primary)", marginBottom: 6 }}><span style={{ color: "var(--accent-primary)" }}>strength:</span> {scenario.sellerStrength}</div>
-              <div style={{ fontSize: 13, color: "var(--text-primary)" }}><span style={{ color: "var(--accent-danger)" }}>weakness:</span> {scenario.sellerWeakness}</div>
+              <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 6 }}>{clientScenario.product}</div>
+              <div style={{ fontSize: 13, color: "var(--text-primary)", marginBottom: 6 }}><span style={{ color: "var(--accent-primary)" }}>strength:</span> {clientScenario.sellerStrength}</div>
+              <div style={{ fontSize: 13, color: "var(--text-primary)" }}><span style={{ color: "var(--accent-danger)" }}>weakness:</span> {clientScenario.sellerWeakness}</div>
             </div>
             <div style={{ background: "var(--bg-primary)", borderRadius: 8, padding: "16px 18px", marginBottom: 20, borderLeft: "3px solid var(--accent-primary)" }}>
               <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 8 }}>buyer_profile &gt;</div>
-              <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{scenario.buyerName}</div>
-              <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 12 }}>{scenario.buyerRole} · {scenario.companyName}</div>
+              <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{clientScenario.buyerName}</div>
+              <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 12 }}>{clientScenario.buyerRole} · {clientScenario.companyName}</div>
               <pre style={{ fontSize: 13, lineHeight: 1.6, margin: 0, whiteSpace: "pre-wrap", fontFamily: "inherit", color: "var(--text-primary)" }}>
-                {scenario.brief}
+                {clientScenario.brief}
               </pre>
             </div>
             <button
@@ -316,7 +316,7 @@ export default function DuelClient() {
   }
 
   // === PLAY + SCORING ===
-  if ((phase === "play" || phase === "scoring") && scenario) {
+  if ((phase === "play" || phase === "scoring") && clientScenario) {
     return (
       <main style={{ ...wrap, position: "relative" }}>
         {/* Brief overlay */}
@@ -335,14 +335,14 @@ export default function DuelClient() {
               </div>
               <div style={{ marginBottom: 16, padding: "12px 14px", background: "var(--bg-primary)", borderRadius: 6, borderLeft: "2px solid var(--accent-secondary)" }}>
                 <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6 }}>your_product &gt;</div>
-                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>{scenario.product}</div>
-                <div style={{ fontSize: 12, color: "var(--text-primary)" }}><span style={{ color: "var(--accent-primary)" }}>+</span> {scenario.sellerStrength}</div>
-                <div style={{ fontSize: 12, color: "var(--text-primary)" }}><span style={{ color: "var(--accent-danger)" }}>-</span> {scenario.sellerWeakness}</div>
+                <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>{clientScenario.product}</div>
+                <div style={{ fontSize: 12, color: "var(--text-primary)" }}><span style={{ color: "var(--accent-primary)" }}>+</span> {clientScenario.sellerStrength}</div>
+                <div style={{ fontSize: 12, color: "var(--text-primary)" }}><span style={{ color: "var(--accent-danger)" }}>-</span> {clientScenario.sellerWeakness}</div>
               </div>
-              <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{scenario.buyerName}</div>
-              <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 12 }}>{scenario.buyerRole} · {scenario.companyName}</div>
+              <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 2 }}>{clientScenario.buyerName}</div>
+              <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 12 }}>{clientScenario.buyerRole} · {clientScenario.companyName}</div>
               <pre style={{ fontSize: 12, lineHeight: 1.6, margin: 0, whiteSpace: "pre-wrap", fontFamily: "inherit", color: "var(--text-secondary)" }}>
-                {scenario.brief}
+                {clientScenario.brief}
               </pre>
             </div>
           </div>
@@ -361,7 +361,7 @@ export default function DuelClient() {
                 </span>
               </div>
               <div style={{ color: "var(--text-secondary)", fontSize: 11, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                {scenario.title}
+                {clientScenario.title}
               </div>
             </div>
             <button onClick={() => setShowBrief(true)} aria-label="Show brief" title="Show dossier" style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-secondary)", fontSize: 16, padding: 4 }}>
@@ -376,14 +376,14 @@ export default function DuelClient() {
           <div style={{ padding: "16px", minHeight: 200, maxHeight: "55vh", overflowY: "auto" }}>
             {history.length === 0 && (
               <div style={{ color: "var(--text-secondary)", fontSize: 13 }}>
-                [session started] meeting {scenario.buyerName} ({scenario.buyerRole})<br />
+                [session started] meeting {clientScenario.buyerName} ({clientScenario.buyerRole})<br />
                 [axiom] go.
               </div>
             )}
             {history.map((m, i) => (
               <div key={i} className={m.role === "player" ? "msg-player" : "msg-buyer"} style={{ marginBottom: 12 }}>
                 <div style={{ fontSize: 11, marginBottom: 2, color: m.role === "player" ? "var(--text-secondary)" : impatienceColor }}>
-                  {m.role === "player" ? "you >" : `${scenario.buyerName} >`}
+                  {m.role === "player" ? "you >" : `${clientScenario.buyerName} >`}
                 </div>
                 <div style={{ fontSize: 15, lineHeight: 1.5 }}>{m.content}</div>
               </div>
