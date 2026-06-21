@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildVerdictPrompt } from "./verdictPrompt";
-import { GeneratedScenario, Stage } from "./types";
+import { GeneratedScenario } from "./types";
 
 const mockScenario = {
   title: "Test",

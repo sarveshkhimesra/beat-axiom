@@ -1,17 +1,19 @@
 import { describe, it, expect } from "vitest";
 import { buildShareText } from "./shareText";
-import { Verdict } from "./types";
+import { V2Verdict } from "./types";
 
-const verdict: Verdict = {
+const verdict: V2Verdict = {
   score: 62, title: "Happy Ears",
-  dimensions: { discovery: 16, signal: 10, objection: 18, value: 11, listening: 7 },
+  stageScores: { discovery: {}, pitch: {}, negotiate: {}, close: {} },
+  modifiers: { efficiency: 0, hiddenPriority: 0, walkaway: false, genericPenalty: 0, prematurePitch: 0 },
   bestLine: "x", worstLine: "y",
   roast: "A hostage negotiation run by the hostage.",
-  didDetectSignal: true, didHandleObjection: false,
+  stagesSummary: "Discovery (3)",
+  didDetectSignal: false, buyerWalkedAway: false,
 };
 
 describe("buildShareText", () => {
-  it("includes the score, the Rahul mention, and the link", () => {
+  it("includes the score, Rahul mention, and link", () => {
     const t = buildShareText(verdict, "https://x.test/r/abc");
     expect(t).toContain("62");
     expect(t).toContain("@Rahul Kothari");

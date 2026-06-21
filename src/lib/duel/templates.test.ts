@@ -23,7 +23,7 @@ describe("templates", () => {
   });
 
   it("getTemplate throws on unknown id", () => {
-    expect(() => getTemplate("nonexistent" as any)).toThrow();
+    expect(() => getTemplate("nonexistent" as never)).toThrow();
   });
 
   it("templates are domain-neutral", () => {

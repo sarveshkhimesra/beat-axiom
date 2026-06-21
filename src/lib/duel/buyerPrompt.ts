@@ -89,7 +89,7 @@ Do not soften it into nothing — make them handle it. Raise it once; don't repe
   }
 
   // ── 9. Impatience instructions ────────────────────────────────────────────
-  const impatienceSection = buildImpatienceSection(impatienceLevel, impatienceConfig);
+  const impatienceSection = buildImpatienceSection(impatienceLevel);
 
   // ── 10. Game over check ───────────────────────────────────────────────────
   let gameOverSection = "";
@@ -164,10 +164,7 @@ No trailing text after the JSON.`;
 
 // ── Helper: impatience section ────────────────────────────────────────────────
 
-function buildImpatienceSection(
-  level: number,
-  config: { baseRate: number; genericQuestionPenalty: number }
-): string {
+function buildImpatienceSection(level: number): string {
   if (level < IMPATIENCE_THRESHOLDS.hinting) {
     return `IMPATIENCE LEVEL: ${level.toFixed(2)} — LOW. You are engaged. Give thoughtful, full answers. Time is not yet a concern.`;
   }
