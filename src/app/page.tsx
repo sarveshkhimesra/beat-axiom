@@ -36,10 +36,6 @@ const CARD_COPY: Record<ScenarioId, string[]> = {
 export default function Home() {
   return (
     <main style={{ maxWidth: 720, margin: "0 auto", padding: "clamp(40px, 10vw, 80px) clamp(16px, 5vw, 28px)", position: "relative" }}>
-      {/* corner attribution */}
-      <div style={{ position: "absolute", top: 14, left: 14, fontSize: 11, color: "var(--text-secondary)", opacity: 0.5 }}>
-        rahul kothari built the game
-      </div>
 
       {/* terminal window — hero */}
       <div className="terminal-window" style={{ padding: 0 }}>
@@ -100,7 +96,10 @@ export default function Home() {
       </section>
 
       {/* footer */}
-      <p style={{ marginTop: 40, fontSize: 11, color: "var(--text-secondary)", textAlign: "center", opacity: 0.6 }}>
+      <p style={{ marginTop: 40, fontSize: 13, color: "var(--text-secondary)", textAlign: "center" }}>
+        built by rahul kothari
+      </p>
+      <p style={{ marginTop: 8, fontSize: 11, color: "var(--text-secondary)", textAlign: "center", opacity: 0.6 }}>
         A fictional sales-training simulation. All buyers and scenarios are invented.
       </p>
       <div style={{ marginTop: 16, textAlign: "center", fontSize: 11, opacity: 0.5 }}>
