@@ -24,8 +24,21 @@ export async function generateMetadata({ params }: { params: { shareId: string }
   return {
     title,
     description,
-    openGraph: { title, description, images: [{ url: ogUrl, width: 1200, height: 630 }] },
-    twitter: { card: "summary_large_image", title, description, images: [ogUrl] },
+    openGraph: {
+      title,
+      description,
+      siteName: "Beat AXIOM",
+      type: "website",
+      images: [{ url: ogUrl, width: 1200, height: 630, alt: `Beat AXIOM scorecard: ${session?.verdict.score ?? 0}/100` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      site: "@rahulkothari",
+      creator: "@rahulkothari",
+      title,
+      description,
+      images: [ogUrl],
+    },
   };
 }
 
@@ -58,9 +71,9 @@ export default async function ScorecardPage({ params }: { params: { shareId: str
 
         {/* score dump */}
         <div style={{ padding: "clamp(20px, 5vw, 32px)" }}>
-          <div style={{ fontSize: "clamp(72px, 20vw, 110px)", lineHeight: 1, fontWeight: 700 }} className="accent-text glow">
+          <h1 style={{ fontSize: "clamp(72px, 20vw, 110px)", lineHeight: 1, fontWeight: 700, margin: 0 }} className="accent-text glow">
             {v.score}<span style={{ fontSize: "clamp(24px, 6vw, 36px)", color: "var(--text-secondary)", fontWeight: 400 }}>/100</span>
-          </div>
+          </h1>
           <div style={{ fontSize: "clamp(20px, 5vw, 28px)", color: "var(--accent-secondary)", marginTop: 8 }}>
             &quot;{v.title}&quot;
           </div>

@@ -11,7 +11,7 @@ export function buildShareText(verdict: Verdict, shareUrl: string): string {
     "",
     `AXIOM's take: "${snippet}"`,
     "",
-    `7 minutes. 1 AI buyer. Can you beat my score? 👇`,
+    `7 minutes. 1 AI buyer. Can you beat my score?`,
     shareUrl,
   ].join("\n");
 }

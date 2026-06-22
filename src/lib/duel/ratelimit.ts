@@ -21,11 +21,16 @@ const verdictLimiter = redis
   : null;
 
 export function clientIp(req: NextRequest): string {
-  return (
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    req.headers.get("x-real-ip") ||
-    "unknown"
-  );
+  // Vercel-specific header (trusted when deployed on Vercel)
+  const vercelIp = req.headers.get("x-vercel-forwarded-for");
+  if (vercelIp) return vercelIp.split(",")[0]?.trim() || "unknown";
+
+  // Standard proxy header — only trust if the platform strips untrusted ones
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0]?.trim() || "unknown";
+
+  // Fallback
+  return req.headers.get("x-real-ip") || "unknown";
 }
 
 export async function checkTurnLimit(ip: string): Promise<{ success: boolean }> {

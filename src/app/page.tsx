@@ -103,6 +103,11 @@ export default function Home() {
       <p style={{ marginTop: 40, fontSize: 11, color: "var(--text-secondary)", textAlign: "center", opacity: 0.6 }}>
         A fictional sales-training simulation. All buyers and scenarios are invented.
       </p>
+      <div style={{ marginTop: 16, textAlign: "center", fontSize: 11, opacity: 0.5 }}>
+        <a href="/privacy" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Privacy</a>
+        <span style={{ margin: "0 8px", color: "var(--text-secondary)" }}>·</span>
+        <a href="/terms" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Terms</a>
+      </div>
     </main>
   );
 }

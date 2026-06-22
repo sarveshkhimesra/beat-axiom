@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /duel/
+
+Sitemap: https://beat-axiom.vercel.app/sitemap.xml

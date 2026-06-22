@@ -188,6 +188,9 @@ export default function DuelClient() {
   return (
     <main style={{ ...wrap, display: "flex", flexDirection: "column", height: "100dvh", padding: 0 }}>
       <div className="terminal-window" style={{ padding: 0, flex: 1, display: "flex", flexDirection: "column", borderRadius: 0, border: "none", borderBottom: "1px solid var(--border)" }}>
+        <div aria-live="polite" aria-atomic="true" className="sr-only" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden" }}>
+          {hook ?? ""}
+        </div>
         {/* header panel */}
         <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
           <AxiomAvatar size={34} />
@@ -259,6 +262,7 @@ export default function DuelClient() {
                 disabled={busy}
                 className="prompt-input"
                 style={{ fontSize: 16 }}
+                aria-label="Type your sales question to the AI buyer"
               />
               <button onClick={send} disabled={busy || !input.trim()} className="btn-primary btn" style={{ padding: "10px 18px", minWidth: 44, minHeight: 44 }}>{"↵"}</button>
             </div>

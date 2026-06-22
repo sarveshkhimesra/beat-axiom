@@ -1,12 +1,13 @@
-import { ImageResponse } from "@vercel/og";
+import { ImageResponse } from "next/og";
 import { getSession } from "@/lib/duel/store";
 
 export const runtime = "nodejs";
 
 const SIZE = { width: 1200, height: 630 };
 
-export async function GET(_req: Request, { params }: { params: { shareId: string } }) {
-  const session = await getSession(params.shareId);
+export async function GET(_req: Request, { params }: { params: Promise<{ shareId: string }> }) {
+  const { shareId } = await params;
+  const session = await getSession(shareId);
   const score = session?.verdict.score ?? 0;
   const title = session?.verdict.title ?? "-";
   const roastFull = session?.verdict.roast ?? "AXIOM has no comment.";

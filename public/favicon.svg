@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <rect width="100" height="100" rx="20" fill="#060810"/>
+  <g fill="none" stroke="#00f5a0" stroke-width="2" opacity="0.9">
+    <polygon points="50,8 86,29 86,71 50,92 14,71 14,29">
+      <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="28s" repeatCount="indefinite"/>
+    </polygon>
+  </g>
+  <g fill="none" stroke="#7b2fff" stroke-width="1.5" opacity="0.6">
+    <polygon points="50,20 76,35 76,65 50,80 24,65 24,35">
+      <animateTransform attributeName="transform" type="rotate" from="360 50 50" to="0 50 50" dur="20s" repeatCount="indefinite"/>
+    </polygon>
+  </g>
+  <circle cx="50" cy="50" r="9" fill="#00f5a0">
+    <animate attributeName="r" values="8;11;8" dur="2.4s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.95;0.7;0.95" dur="2.4s" repeatCount="indefinite"/>
+  </circle>
+</svg>
