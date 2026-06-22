@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Beat AXIOM",
-  description: "An AI that grades your sales instincts. Seven questions. One shot. Built by Rahul Kothari.",
+  description: "An AI that grades your sales instincts. Seven minutes. One shot. Built by Rahul Kothari.",
 };
 
 export default function RootLayout({

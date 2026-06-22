@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ shareId: 
   const title = session
     ? `I scored ${session.verdict.score}/100 on Beat AXIOM — "${session.verdict.title}"`
     : "Beat AXIOM — an AI sales duel by Rahul Kothari";
-  const description = session?.verdict.roast ?? "Seven questions. One verdict. Can you beat AXIOM?";
+  const description = session?.verdict.roast ?? "Seven minutes. One verdict. Can you beat AXIOM?";
   return {
     title,
     description,
