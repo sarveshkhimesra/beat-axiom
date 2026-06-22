@@ -82,8 +82,13 @@ export default function Home() {
                 transition: "border-color 120ms",
               }}
             >
-              <div className="accent-text" style={{ fontSize: "clamp(16px, 4vw, 19px)", fontWeight: 600, marginBottom: 8 }}>
-                {CLIENT_SCENARIOS[id].title}
+              <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
+                <span className="accent-text" style={{ fontSize: "clamp(16px, 4vw, 19px)", fontWeight: 600 }}>
+                  {CLIENT_SCENARIOS[id].title}
+                </span>
+                <span style={{ fontSize: 12, color: "var(--text-secondary)", opacity: 0.7 }}>
+                  selling {CLIENT_SCENARIOS[id].product}
+                </span>
               </div>
               <div style={{ color: "var(--text-secondary)", fontSize: "clamp(13px, 3.5vw, 15px)", lineHeight: 1.6 }}>
                 {CARD_COPY[id].map((line, i) => (
