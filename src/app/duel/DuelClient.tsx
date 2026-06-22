@@ -6,7 +6,6 @@ import { SCENARIOS, SCENARIO_IDS } from "@/lib/duel/scenarios";
 import { MAX_PLAYER_TURNS } from "@/lib/duel/config";
 import { DuelMessage, ScenarioId } from "@/lib/duel/types";
 import { sfx, isMuted, setMuted } from "@/lib/duel/sfx";
-import { useSpeech } from "@/lib/duel/useSpeech";
 import AxiomAvatar from "@/components/AxiomAvatar";
 
 type Phase = "pick" | "play" | "scoring";
@@ -34,8 +33,6 @@ export default function DuelClient() {
   const [hook, setHook] = useState<string | null>(null);
   const [muted, setMutedState] = useState(false);
 
-  const speech = useSpeech({ currentText: input, onText: setInput });
-
   useEffect(() => { setMutedState(isMuted()); }, []);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [history]);
 
@@ -48,7 +45,6 @@ export default function DuelClient() {
 
   async function send() {
     if (!scenarioId || !input.trim() || busy) return;
-    if (speech.listening) speech.pause();
     setBusy(true); setError(null); setHook(null); sfx.send();
     try {
       const res = await fetch("/api/duel/avatar", {
@@ -67,7 +63,6 @@ export default function DuelClient() {
 
   async function getVerdict() {
     if (!scenarioId || busy) return;
-    if (speech.listening) speech.pause();
     setBusy(true); setError(null); setPhase("scoring");
     try {
       const res = await fetch("/api/duel/verdict", {
@@ -171,52 +166,18 @@ export default function DuelClient() {
         <div style={{ padding: "12px 16px", borderTop: "1px solid var(--border)" }}>
           {error && <div className="danger-text" style={{ fontSize: 13, marginBottom: 8 }}>[error] {error}</div>}
           {canSend ? (
-            <>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span className="accent-text" style={{ fontSize: 14, userSelect: "none" }}>&gt;</span>
-                <input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && send()}
-                  placeholder={speech.listening ? "listening — speak freely..." : "type or tap mic to speak"}
-                  disabled={busy}
-                  className="prompt-input"
-                />
-                {speech.supported && (
-                  <button
-                    onClick={() => speech.toggle()}
-                    disabled={busy}
-                    aria-label={speech.listening ? "Pause mic" : "Start mic"}
-                    title={speech.listening ? "Pause — your words are safe" : "Speak — press again to pause"}
-                    style={{
-                      background: speech.listening ? "var(--accent-danger)" : "transparent",
-                      border: `1px solid ${speech.listening ? "var(--accent-danger)" : "var(--border)"}`,
-                      borderRadius: 6,
-                      padding: "6px 12px",
-                      cursor: "pointer",
-                      fontSize: 16,
-                      color: speech.listening ? "#fff" : "var(--text-secondary)",
-                      animation: speech.listening ? "pulse-glow 1.5s ease-in-out infinite" : "none",
-                    }}
-                  >
-                    {speech.listening ? "⏸" : "🎤"}
-                  </button>
-                )}
-                <button onClick={send} disabled={busy || !input.trim()} className="btn-primary btn" style={{ padding: "6px 14px" }}>{"↵"}</button>
-              </div>
-              {speech.supported && speech.listening && (
-                <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 6 }}>
-                  <span style={{ color: "var(--accent-danger)" }}>{"● recording"}</span>
-                  {" — speak freely, press pause to stop. press Send when ready."}
-                  {speech.interim ? <span style={{ display: "block", color: "var(--accent-primary)", marginTop: 2, opacity: 0.7 }}>{"hearing: " + speech.interim}</span> : null}
-                </div>
-              )}
-              {speech.supported && !speech.listening && (
-                <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 6 }}>
-                  {"tap 🎤 to speak — press again to pause (nothing is lost)."}
-                </div>
-              )}
-            </>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span className="accent-text" style={{ fontSize: 14, userSelect: "none" }}>&gt;</span>
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && send()}
+                placeholder="type your question..."
+                disabled={busy}
+                className="prompt-input"
+              />
+              <button onClick={send} disabled={busy || !input.trim()} className="btn-primary btn" style={{ padding: "6px 14px" }}>{"↵"}</button>
+            </div>
           ) : (
             <div style={{ color: "var(--text-secondary)", fontSize: 13 }}>{"[axiom] no questions remaining."}</div>
           )}
