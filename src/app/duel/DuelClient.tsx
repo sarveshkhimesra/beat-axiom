@@ -8,7 +8,7 @@ import { DuelMessage, ScenarioId } from "@/lib/duel/types";
 import { sfx, isMuted, setMuted } from "@/lib/duel/sfx";
 import AxiomAvatar from "@/components/AxiomAvatar";
 
-type Phase = "pick" | "play" | "scoring";
+type Phase = "pick" | "brief" | "play" | "scoring";
 
 function hookFor(turnNumber: number): string {
   const lines = [
@@ -36,8 +36,7 @@ export default function DuelClient() {
 
   const preselected = searchParams.get("scenario") as ScenarioId | null;
 
-  // T-5: phase and scenarioId are safe string inits; startedAt is moved to useEffect
-  const [phase, setPhase] = useState<Phase>(preselected && CLIENT_SCENARIOS[preselected] ? "play" : "pick");
+  const [phase, setPhase] = useState<Phase>(preselected && CLIENT_SCENARIOS[preselected] ? "brief" : "pick");
   const [scenarioId, setScenarioId] = useState<ScenarioId | null>(preselected && CLIENT_SCENARIOS[preselected] ? preselected : null);
   const [history, setHistory] = useState<DuelMessage[]>([]);
   const [input, setInput] = useState("");
@@ -68,13 +67,6 @@ export default function DuelClient() {
   useEffect(() => { setMutedState(isMuted()); }, []);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [history, hook]);
 
-  // T-5: set startedAt on mount if pre-selected scenario is valid
-  useEffect(() => {
-    if (phase === "play" && !startedAt) {
-      setStartedAt(Date.now());
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase]);
 
   // Timer tick — B-2: uses warnedRef, no warned in deps
   useEffect(() => {
@@ -126,10 +118,14 @@ export default function DuelClient() {
 
   function toggleMute() { const n = !muted; setMuted(n); setMutedState(n); }
 
-  function start(id: ScenarioId) {
+  function selectScenario(id: ScenarioId) {
     setScenarioId(id);
     setHistory([]);
     historyRef.current = [];
+    setPhase("brief");
+  }
+
+  function beginMeeting() {
     setStartedAt(Date.now());
     setRemaining(DUEL_DURATION_SECONDS);
     warnedRef.current = false;
@@ -204,12 +200,54 @@ export default function DuelClient() {
             <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 16 }}>$ ls scenarios/</div>
             <div style={{ display: "grid", gap: 10 }}>
               {CLIENT_SCENARIO_IDS.map((id) => (
-                <button key={id} onClick={() => start(id)} className="glow-box" style={{ textAlign: "left", padding: "14px 16px", borderRadius: 8, cursor: "pointer", color: "var(--text-primary)", background: "var(--bg-surface)", border: "1px solid var(--border)", transition: "border-color 120ms" }}>
+                <button key={id} onClick={() => selectScenario(id)} className="glow-box" style={{ textAlign: "left", padding: "14px 16px", borderRadius: 8, cursor: "pointer", color: "var(--text-primary)", background: "var(--bg-surface)", border: "1px solid var(--border)", transition: "border-color 120ms" }}>
                   <div className="accent-text" style={{ fontSize: "clamp(15px, 4vw, 18px)", fontWeight: 600 }}>{CLIENT_SCENARIOS[id].title}</div>
                   <div style={{ color: "var(--text-secondary)", marginTop: 4, fontSize: 13 }}>{CLIENT_SCENARIOS[id].setup}</div>
                 </button>
               ))}
             </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // === BRIEF PHASE === (read the setup, then start when ready)
+  if (phase === "brief" && scenario) {
+    return (
+      <main style={wrap}>
+        <div className="terminal-window" style={{ padding: 0 }}>
+          <div style={{ padding: "clamp(20px, 5vw, 32px)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+              <AxiomAvatar size={40} />
+              <div>
+                <div className="accent-text" style={{ fontSize: 15, fontWeight: 700 }}>MISSION BRIEF</div>
+                <div style={{ color: "var(--text-secondary)", fontSize: 11 }}>read carefully — timer starts when you do</div>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: "clamp(18px, 5vw, 22px)", fontWeight: 600, color: "var(--text-primary)", marginBottom: 12 }}>
+                {scenario.title}
+              </div>
+              <p style={{ color: "var(--text-secondary)", fontSize: 15, lineHeight: 1.7, margin: "0 0 16px 0" }}>
+                {scenario.setup}
+              </p>
+              <div style={{ padding: "12px 14px", background: "var(--bg-primary)", borderRadius: 8, border: "1px solid var(--border)" }}>
+                <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6 }}>you are meeting:</div>
+                <div style={{ fontSize: 15, color: "var(--text-primary)" }}>
+                  <strong>{scenario.buyer.name}</strong> — {scenario.buyer.role}
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={beginMeeting}
+              className="glow-box"
+              style={{ width: "100%", padding: "14px 28px", background: "var(--accent-primary)", color: "#040d08", borderRadius: 8, fontSize: 16, fontWeight: 700, border: "none", cursor: "pointer", letterSpacing: "0.03em" }}
+            >
+              start meeting — 7:00 begins
+            </button>
           </div>
         </div>
       </main>
@@ -242,6 +280,12 @@ export default function DuelClient() {
             {formatTime(remaining)}
           </div>
           {muteBtn}
+        </div>
+
+        {/* Always-visible brief */}
+        <div style={{ padding: "8px 16px", borderBottom: "1px solid var(--border)", background: "var(--bg-primary)", fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5, flexShrink: 0 }}>
+          <span style={{ color: "var(--accent-primary)", fontWeight: 600 }}>Brief:</span>{" "}
+          {scenario?.setup} — Meeting with <strong style={{ color: "var(--text-primary)" }}>{scenario?.buyer.name}</strong> ({scenario?.buyer.role})
         </div>
 
         {/* conversation log — chat bubbles */}
