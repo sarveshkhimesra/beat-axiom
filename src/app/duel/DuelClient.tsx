@@ -236,7 +236,7 @@ export default function DuelClient() {
 
               <div style={{ display: "grid", gap: 10, marginBottom: 0 }}>
                 <div style={{ padding: "12px 14px", background: "var(--bg-primary)", borderRadius: 8, border: "1px solid var(--border)" }}>
-                  <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6 }}>you are selling:</div>
+                  <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6 }}>your product:</div>
                   <div style={{ fontSize: 15, color: "var(--text-primary)" }}>
                     <strong>{scenario.product}</strong>
                   </div>
@@ -245,9 +245,18 @@ export default function DuelClient() {
                   </div>
                 </div>
                 <div style={{ padding: "12px 14px", background: "var(--bg-primary)", borderRadius: 8, border: "1px solid var(--border)" }}>
-                  <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6 }}>you are meeting:</div>
+                  <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6 }}>the buyer:</div>
                   <div style={{ fontSize: 15, color: "var(--text-primary)" }}>
                     <strong>{scenario.buyer.name}</strong> — {scenario.buyer.role}
+                  </div>
+                  <div style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 4 }}>
+                    {scenario.buyer.company}
+                  </div>
+                </div>
+                <div style={{ padding: "12px 14px", background: "var(--bg-primary)", borderRadius: 8, border: "1px solid var(--border)" }}>
+                  <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6 }}>company intel:</div>
+                  <div style={{ fontSize: 14, color: "var(--text-primary)", lineHeight: 1.6 }}>
+                    {scenario.buyer.companyBrief}
                   </div>
                 </div>
               </div>
@@ -296,7 +305,7 @@ export default function DuelClient() {
 
         {/* Always-visible brief */}
         <div style={{ padding: "8px 16px", borderBottom: "1px solid var(--border)", background: "var(--bg-primary)", fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.6, flexShrink: 0 }}>
-          <strong style={{ color: "var(--text-primary)" }}>{scenario?.buyer.name}</strong> ({scenario?.buyer.role})
+          <strong style={{ color: "var(--text-primary)" }}>{scenario?.buyer.name}</strong> · {scenario?.buyer.role} @ {scenario?.buyer.company}
           {" · "}Pitching: <span style={{ color: "var(--text-primary)" }}>{scenario?.product}</span>
           {" · "}Edge: <span style={{ color: "var(--accent-primary)" }}>{scenario?.sellerStrength}</span>
         </div>
