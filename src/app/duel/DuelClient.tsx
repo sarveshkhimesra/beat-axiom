@@ -64,6 +64,25 @@ export default function DuelClient() {
   // S-1: busyRef for double-send protection
   const busyRef = useRef(false);
 
+  // iOS Safari: track actual visual viewport height (keyboard shrinks it)
+  const [viewHeight, setViewHeight] = useState<string>("100dvh");
+  useEffect(() => {
+    function updateHeight() {
+      if (window.visualViewport) {
+        setViewHeight(`${window.visualViewport.height}px`);
+      }
+    }
+    if (window.visualViewport) {
+      updateHeight();
+      window.visualViewport.addEventListener("resize", updateHeight);
+      window.visualViewport.addEventListener("scroll", updateHeight);
+      return () => {
+        window.visualViewport!.removeEventListener("resize", updateHeight);
+        window.visualViewport!.removeEventListener("scroll", updateHeight);
+      };
+    }
+  }, []);
+
   useEffect(() => { setMutedState(isMuted()); }, []);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [history, hook]);
 
@@ -279,7 +298,7 @@ export default function DuelClient() {
   const canSend = !timeUp;
   const timerDanger = remaining <= DUEL_WARNING_SECONDS;
   return (
-    <main style={{ display: "flex", flexDirection: "column", height: "100dvh", overflow: "hidden", padding: 0, margin: 0 }}>
+    <main style={{ display: "flex", flexDirection: "column", height: viewHeight, overflow: "hidden", padding: 0, margin: 0, position: "fixed", top: 0, left: 0, right: 0 }}>
       <div aria-live="polite" aria-atomic="true" className="sr-only" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden" }}>
         {hook ?? ""}
       </div>
