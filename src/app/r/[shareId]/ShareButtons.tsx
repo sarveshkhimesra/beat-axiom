@@ -73,7 +73,7 @@ export default function ShareButtons({
       <div className="font-mono-display" style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 12 }}>
         SHARE YOUR VERDICT
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+      <div className="share-stack" style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
         <button onClick={onLinkedIn} style={{ ...btn, background: "#0a66c2", borderColor: "#0a66c2" }}>
           in&nbsp; Share on LinkedIn
         </button>
