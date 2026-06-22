@@ -244,29 +244,32 @@ export default function DuelClient() {
           {muteBtn}
         </div>
 
-        {/* conversation log */}
-        <div style={{ padding: "16px", flex: 1, overflowY: "auto" }}>
+        {/* conversation log — chat bubbles */}
+        <div style={{ padding: "16px", flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10 }}>
           {history.length === 0 && (
-            <div style={{ color: "var(--text-secondary)", fontSize: 13 }}>
-              [session started] selling {scenario?.product} to {scenario?.buyer.name} ({scenario?.buyer.role})<br/>
-              [axiom] 7 minutes on the clock. go.
+            <div className="system-msg">
+              {scenario?.buyer.name} ({scenario?.buyer.role}) · 7 min · go
             </div>
           )}
           {history.map((m, i) => (
-            <div key={i} className={m.role === "player" ? "msg-player" : "msg-buyer"} style={{ marginBottom: 12 }}>
-              <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 2 }}>
-                {m.role === "player" ? "you >" : `${scenario?.buyer.name} >`}
+            m.role === "player" ? (
+              <div key={i} className="bubble-player">{m.content}</div>
+            ) : (
+              <div key={i} style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                {(i === 1 || history[i - 1]?.role === "player") && (
+                  <div className="bubble-buyer-label">{scenario?.buyer.name}</div>
+                )}
+                <div className="bubble-buyer">{m.content}</div>
               </div>
-              <div style={{ fontSize: 15, lineHeight: 1.5 }}>{m.content}</div>
-            </div>
+            )
           ))}
-          {busy && phase === "play" && <div style={{ color: "var(--text-secondary)", fontSize: 13 }}>...</div>}
+          {busy && phase === "play" && <div className="typing-bubble">...</div>}
           {hook && !busy && phase === "play" && (
-            <div style={{ color: "var(--accent-primary)", fontSize: 13, marginTop: 4, opacity: 0.8 }}>{hook}</div>
+            <div className="system-msg">{hook}</div>
           )}
           {phase === "scoring" && (
-            <div className="accent-text glow" style={{ marginTop: 12, fontSize: 14 }}>
-              [axiom] evaluating transcript... rendering verdict<span className="cursor"></span>
+            <div className="system-msg">
+              evaluating transcript... rendering verdict<span className="cursor"></span>
             </div>
           )}
           <div ref={endRef} />
@@ -277,7 +280,6 @@ export default function DuelClient() {
           {error && <div className="danger-text" style={{ fontSize: 13, marginBottom: 8 }}>[error] {error}</div>}
           {canSend ? (
             <div style={{ display: "flex", alignItems: "flex-end", gap: 8 }}>
-              <span className="accent-text" style={{ fontSize: 14, userSelect: "none", paddingBottom: 10 }}>&gt;</span>
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
