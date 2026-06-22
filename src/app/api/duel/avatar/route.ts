@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { anthropicClient, extractText } from "@/lib/anthropic";
 import { getScenario } from "@/lib/duel/scenarios";
 import { buildBuyerPrompt } from "@/lib/duel/avatarPrompt";
-import { AVATAR_MODEL, MAX_PLAYER_TURNS, DUEL_PAUSED } from "@/lib/duel/config";
+import { MAX_PLAYER_TURNS } from "@/lib/duel/config";
+import { AVATAR_MODEL, DUEL_PAUSED } from "@/lib/duel/server-config";
 import { checkTurnLimit, clientIp, verifyTurnstile } from "@/lib/duel/ratelimit";
 import { DuelMessage, ScenarioId } from "@/lib/duel/types";
 
@@ -28,7 +29,25 @@ export async function POST(req: NextRequest) {
   const message = body.message.trim();
   if (!message) return NextResponse.json({ error: "message is empty" }, { status: 400 });
 
+  // Validate input sizes
+  if (message.length > 1000) {
+    return NextResponse.json({ error: "message too long" }, { status: 400 });
+  }
+
   const history = Array.isArray(body.history) ? body.history : [];
+
+  if (history.length > MAX_PLAYER_TURNS * 2) {
+    return NextResponse.json({ error: "history too long" }, { status: 400 });
+  }
+  for (const m of history) {
+    if (!m || typeof m.content !== "string" || !["player", "buyer"].includes(m.role)) {
+      return NextResponse.json({ error: "invalid history format" }, { status: 400 });
+    }
+    if (m.content.length > 2000) {
+      return NextResponse.json({ error: "history message too long" }, { status: 400 });
+    }
+  }
+
   const askedSoFar = history.filter((m) => m.role === "player").length;
   if (askedSoFar >= MAX_PLAYER_TURNS) {
     return NextResponse.json({ error: "turn limit reached — get your verdict" }, { status: 409 });
@@ -63,9 +82,10 @@ export async function POST(req: NextRequest) {
     });
     const reply = extractText(completion);
 
-    const vagueMatcher = /\[VAGUE:(true|false)\]\s*$/;
-    const vagueMatch = reply.match(vagueMatcher);
-    const vague = vagueMatch ? vagueMatch[1] === "true" : false;
+    // FIX 4: Global vague regex — handles tag anywhere in response, uses last match
+    const vagueMatcher = /\[VAGUE:(true|false)\]/g;
+    const vagueMatches = reply.match(vagueMatcher);
+    const vague = vagueMatches ? vagueMatches[vagueMatches.length - 1].includes("true") : false;
     const cleanReply = reply.replace(vagueMatcher, "").trim();
 
     const now = Date.now();
@@ -79,6 +99,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     const e = err as { status?: number; message?: string };
     console.error("[duel/avatar] upstream error", e);
-    return NextResponse.json({ error: e?.message ?? "AXIOM's buyer is unavailable" }, { status: 502 });
+    // FIX 3: Suppress raw error messages
+    return NextResponse.json({ error: "AXIOM's buyer is unavailable" }, { status: 502 });
   }
 }

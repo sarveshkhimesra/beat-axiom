@@ -7,6 +7,9 @@ const SIZE = { width: 1200, height: 630 };
 
 export async function GET(_req: Request, { params }: { params: Promise<{ shareId: string }> }) {
   const { shareId } = await params;
+  if (!/^[A-Za-z0-9_-]{6,21}$/.test(shareId)) {
+    return new Response("Not found", { status: 404 });
+  }
   const session = await getSession(shareId);
   const score = session?.verdict.score ?? 0;
   const title = session?.verdict.title ?? "-";

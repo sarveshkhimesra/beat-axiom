@@ -1,6 +1,6 @@
 import Link from "next/link";
 import AxiomAvatar from "@/components/AxiomAvatar";
-import { SCENARIO_IDS, SCENARIOS } from "@/lib/duel/scenarios";
+import { CLIENT_SCENARIO_IDS, CLIENT_SCENARIOS } from "@/lib/duel/scenarios-client";
 import { ScenarioId } from "@/lib/duel/types";
 
 export const runtime = "nodejs";
@@ -70,7 +70,7 @@ export default function Home() {
           Choose Your Buyer
         </h2>
         <div style={{ display: "grid", gap: 14 }}>
-          {SCENARIO_IDS.map((id) => (
+          {CLIENT_SCENARIO_IDS.map((id) => (
             <Link
               key={id}
               href={`/duel?scenario=${id}`}
@@ -87,7 +87,7 @@ export default function Home() {
               }}
             >
               <div className="accent-text" style={{ fontSize: "clamp(16px, 4vw, 19px)", fontWeight: 600, marginBottom: 8 }}>
-                {SCENARIOS[id].title}
+                {CLIENT_SCENARIOS[id].title}
               </div>
               <div style={{ color: "var(--text-secondary)", fontSize: "clamp(13px, 3.5vw, 15px)", lineHeight: 1.6 }}>
                 {CARD_COPY[id].map((line, i) => (

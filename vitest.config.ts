@@ -3,5 +3,11 @@ import path from "node:path";
 
 export default defineConfig({
   test: { environment: "node", include: ["src/**/*.test.ts"] },
-  resolve: { alias: { "@": path.resolve(__dirname, "src") } },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"),
+      // server-only is a Next.js sentinel — mock it as a no-op in tests
+      "server-only": path.resolve(__dirname, "src/__mocks__/server-only.ts"),
+    },
+  },
 });

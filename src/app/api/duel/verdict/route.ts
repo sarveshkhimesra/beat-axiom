@@ -4,7 +4,8 @@ import { getScenario } from "@/lib/duel/scenarios";
 import { buildAxiomVerdictPrompt } from "@/lib/duel/axiomPrompt";
 import { parseVerdict } from "@/lib/duel/rubric";
 import { saveSession } from "@/lib/duel/store";
-import { VERDICT_MODEL, DUEL_PAUSED } from "@/lib/duel/config";
+import { MAX_PLAYER_TURNS } from "@/lib/duel/config";
+import { VERDICT_MODEL, DUEL_PAUSED } from "@/lib/duel/server-config";
 import { checkVerdictLimit, clientIp, verifyTurnstile } from "@/lib/duel/ratelimit";
 import { DuelMessage, ScenarioId } from "@/lib/duel/types";
 
@@ -25,6 +26,19 @@ export async function POST(req: NextRequest) {
   const history = Array.isArray(body.history) ? body.history : [];
   if (!body.scenarioId || history.length === 0) {
     return NextResponse.json({ error: "scenarioId and a non-empty history required" }, { status: 400 });
+  }
+
+  // Validate input sizes
+  if (history.length > MAX_PLAYER_TURNS * 2) {
+    return NextResponse.json({ error: "history too long" }, { status: 400 });
+  }
+  for (const m of history) {
+    if (!m || typeof m.content !== "string" || !["player", "buyer"].includes(m.role)) {
+      return NextResponse.json({ error: "invalid history format" }, { status: 400 });
+    }
+    if (m.content.length > 2000) {
+      return NextResponse.json({ error: "history message too long" }, { status: 400 });
+    }
   }
 
   if (!(await verifyTurnstile(body.turnstileToken, ip))) {
@@ -61,6 +75,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     const e = err as { status?: number; message?: string };
     console.error("[duel/verdict] error", e);
-    return NextResponse.json({ error: e?.message ?? "AXIOM could not render a verdict" }, { status: 502 });
+    // FIX 3: Suppress raw error messages
+    return NextResponse.json({ error: "AXIOM could not render a verdict" }, { status: 502 });
   }
 }

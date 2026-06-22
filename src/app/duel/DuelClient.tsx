@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { SCENARIOS, SCENARIO_IDS } from "@/lib/duel/scenarios";
+import { CLIENT_SCENARIOS, CLIENT_SCENARIO_IDS } from "@/lib/duel/scenarios-client";
 import { MAX_PLAYER_TURNS, DUEL_DURATION_SECONDS, DUEL_WARNING_SECONDS, VAGUE_QUESTION_LIMIT } from "@/lib/duel/config";
 import { DuelMessage, ScenarioId } from "@/lib/duel/types";
 import { sfx, isMuted, setMuted } from "@/lib/duel/sfx";
@@ -33,8 +33,10 @@ export default function DuelClient() {
   const endRef = useRef<HTMLDivElement>(null);
 
   const preselected = searchParams.get("scenario") as ScenarioId | null;
-  const [phase, setPhase] = useState<Phase>(preselected && SCENARIOS[preselected] ? "play" : "pick");
-  const [scenarioId, setScenarioId] = useState<ScenarioId | null>(preselected && SCENARIOS[preselected] ? preselected : null);
+
+  // T-5: phase and scenarioId are safe string inits; startedAt is moved to useEffect
+  const [phase, setPhase] = useState<Phase>(preselected && CLIENT_SCENARIOS[preselected] ? "play" : "pick");
+  const [scenarioId, setScenarioId] = useState<ScenarioId | null>(preselected && CLIENT_SCENARIOS[preselected] ? preselected : null);
   const [history, setHistory] = useState<DuelMessage[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -43,25 +45,44 @@ export default function DuelClient() {
   const [muted, setMutedState] = useState(false);
 
   // Timer state
-  const [startedAt, setStartedAt] = useState<number | null>(preselected && SCENARIOS[preselected] ? Date.now() : null);
+  const [startedAt, setStartedAt] = useState<number | null>(null); // T-5: no Date.now() in init
   const [remaining, setRemaining] = useState(DUEL_DURATION_SECONDS);
-  const [warned, setWarned] = useState(false);
 
   // Vague question tracking
   const [vagueStreak, setVagueStreak] = useState(0);
 
+  // B-2: warnedRef instead of warned state (no stale closure in timer)
+  const warnedRef = useRef(false);
+
+  // T-4: historyRef for stale closures in setTimeout/callbacks
+  const historyRef = useRef<DuelMessage[]>([]);
+
+  // T-2/A-1: verdictFiredRef to prevent infinite verdict loop
+  const verdictFiredRef = useRef(false);
+
+  // S-1: busyRef for double-send protection
+  const busyRef = useRef(false);
+
   useEffect(() => { setMutedState(isMuted()); }, []);
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [history, hook]);
 
-  // Timer tick
+  // T-5: set startedAt on mount if pre-selected scenario is valid
+  useEffect(() => {
+    if (phase === "play" && !startedAt) {
+      setStartedAt(Date.now());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
+
+  // Timer tick — B-2: uses warnedRef, no warned in deps
   useEffect(() => {
     if (phase !== "play" || !startedAt) return;
     const interval = setInterval(() => {
       const elapsed = Math.floor((Date.now() - startedAt) / 1000);
       const left = Math.max(0, DUEL_DURATION_SECONDS - elapsed);
       setRemaining(left);
-      if (left <= DUEL_WARNING_SECONDS && !warned) {
-        setWarned(true);
+      if (left <= DUEL_WARNING_SECONDS && !warnedRef.current) {
+        warnedRef.current = true;
         setHook("[axiom] 30 seconds — wrap it up or I'm calling it.");
       }
       if (left <= 0) {
@@ -69,59 +90,70 @@ export default function DuelClient() {
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [phase, startedAt, warned]);
+  }, [phase, startedAt]);
 
   const turnsUsed = history.filter((m) => m.role === "player").length;
-  const scenario = scenarioId ? SCENARIOS[scenarioId] : null;
+  const scenario = scenarioId ? CLIENT_SCENARIOS[scenarioId] : null;
   const timeUp = remaining <= 0;
 
+  // T-4: use historyRef.current; S-1: busyRef guard; removed busy+history from deps
   const getVerdict = useCallback(async () => {
-    if (!scenarioId || busy) return;
+    if (!scenarioId || busy || busyRef.current) return;
+    busyRef.current = true;
     setBusy(true); setError(null); setPhase("scoring");
     try {
       const res = await fetch("/api/duel/verdict", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ scenarioId, history }),
+        body: JSON.stringify({ scenarioId, history: historyRef.current }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "request failed");
       router.push(`/r/${data.session.shareId}`);
     } catch (e) { setError((e as Error).message); setPhase("play"); }
-    finally { setBusy(false); }
-  }, [scenarioId, busy, history, router]);
+    finally { setBusy(false); busyRef.current = false; }
+  }, [scenarioId, busy, router]);
 
-  // Auto-trigger verdict when time runs out
+  // Auto-trigger verdict when time runs out — T-2: verdictFiredRef prevents loop
   useEffect(() => {
-    if (timeUp && phase === "play" && history.length > 0 && !busy) {
+    if (timeUp && phase === "play" && historyRef.current.length > 0 && !busy && !verdictFiredRef.current) {
+      verdictFiredRef.current = true;
       getVerdict();
     }
-  }, [timeUp, phase, history.length, busy, getVerdict]);
+  }, [timeUp, phase, busy, getVerdict]);
 
   function toggleMute() { const n = !muted; setMuted(n); setMutedState(n); }
 
   function start(id: ScenarioId) {
     setScenarioId(id);
     setHistory([]);
+    historyRef.current = [];
     setStartedAt(Date.now());
     setRemaining(DUEL_DURATION_SECONDS);
-    setWarned(false);
+    warnedRef.current = false;
+    verdictFiredRef.current = false;
     setVagueStreak(0);
     setPhase("play");
   }
 
   async function send() {
-    if (!scenarioId || !input.trim() || busy || timeUp) return;
+    if (!scenarioId || !input.trim() || busy || timeUp || busyRef.current) return;
+    busyRef.current = true;
     setBusy(true); setError(null); setHook(null); sfx.send();
     try {
       const res = await fetch("/api/duel/avatar", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ scenarioId, message: input.trim(), history }),
+        body: JSON.stringify({ scenarioId, message: input.trim(), history: historyRef.current }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "request failed");
-      setHistory((h) => [...h, data.playerMessage, data.buyerMessage]);
+      // T-4: update historyRef alongside state
+      setHistory((h) => {
+        const next = [...h, data.playerMessage, data.buyerMessage];
+        historyRef.current = next;
+        return next;
+      });
       setInput(""); sfx.reply();
 
       // Vague question tracking
@@ -142,7 +174,7 @@ export default function DuelClient() {
 
       setHook(hookFor(MAX_PLAYER_TURNS - (turnsUsed + 1)));
     } catch (e) { setError((e as Error).message); }
-    finally { setBusy(false); }
+    finally { setBusy(false); busyRef.current = false; }
   }
 
   const muteBtn = (
@@ -169,10 +201,10 @@ export default function DuelClient() {
             </div>
             <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 16 }}>$ ls scenarios/</div>
             <div style={{ display: "grid", gap: 10 }}>
-              {SCENARIO_IDS.map((id) => (
+              {CLIENT_SCENARIO_IDS.map((id) => (
                 <button key={id} onClick={() => start(id)} className="glow-box" style={{ textAlign: "left", padding: "14px 16px", borderRadius: 8, cursor: "pointer", color: "var(--text-primary)", background: "var(--bg-surface)", border: "1px solid var(--border)", transition: "border-color 120ms" }}>
-                  <div className="accent-text" style={{ fontSize: "clamp(15px, 4vw, 18px)", fontWeight: 600 }}>{SCENARIOS[id].title}</div>
-                  <div style={{ color: "var(--text-secondary)", marginTop: 4, fontSize: 13 }}>{SCENARIOS[id].setup}</div>
+                  <div className="accent-text" style={{ fontSize: "clamp(15px, 4vw, 18px)", fontWeight: 600 }}>{CLIENT_SCENARIOS[id].title}</div>
+                  <div style={{ color: "var(--text-secondary)", marginTop: 4, fontSize: 13 }}>{CLIENT_SCENARIOS[id].setup}</div>
                 </button>
               ))}
             </div>

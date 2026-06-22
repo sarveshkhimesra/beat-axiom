@@ -16,6 +16,9 @@ function baseUrl(): string {
 
 export async function generateMetadata({ params }: { params: Promise<{ shareId: string }> }): Promise<Metadata> {
   const { shareId } = await params;
+  if (!/^[A-Za-z0-9_-]{6,21}$/.test(shareId)) {
+    return {};
+  }
   const session = await getSession(shareId);
   const ogUrl = `${baseUrl()}/og/${shareId}`;
   const title = session
@@ -45,6 +48,16 @@ export async function generateMetadata({ params }: { params: Promise<{ shareId: 
 
 export default async function ScorecardPage({ params }: { params: Promise<{ shareId: string }> }) {
   const { shareId } = await params;
+  if (!/^[A-Za-z0-9_-]{6,21}$/.test(shareId)) {
+    return (
+      <main style={{ maxWidth: 640, margin: "0 auto", padding: 48 }}>
+        <div className="terminal-window" style={{ padding: "32px" }}>
+          <p style={{ color: "var(--text-secondary)" }}>[axiom] scorecard not found. it may have expired.</p>
+          <Link href="/" className="accent-text" style={{ marginTop: 16, display: "inline-block" }}>$ ./start-duel</Link>
+        </div>
+      </main>
+    );
+  }
   const session = await getSession(shareId);
   if (!session) {
     return (

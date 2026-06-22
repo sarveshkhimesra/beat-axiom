@@ -1,3 +1,4 @@
+import "server-only";
 import { Scenario, ScenarioId } from "./types";
 
 export const SCENARIOS: Record<ScenarioId, Scenario> = {
