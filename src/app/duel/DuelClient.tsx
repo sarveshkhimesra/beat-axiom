@@ -280,27 +280,30 @@ export default function DuelClient() {
   const timerDanger = remaining <= DUEL_WARNING_SECONDS;
   return (
     <main style={{ ...wrap, display: "flex", flexDirection: "column", height: "100dvh", padding: 0 }}>
-      <div className="terminal-window" style={{ padding: 0, flex: 1, display: "flex", flexDirection: "column", borderRadius: 0, border: "none", borderBottom: "1px solid var(--border)" }}>
+      {/* header — fixed at viewport top, always visible */}
+      <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "var(--bg-terminal)", borderBottom: "1px solid var(--border)", padding: "12px 16px", display: "flex", alignItems: "center", gap: 10, maxWidth: 680, margin: "0 auto" }}>
+        <AxiomAvatar size={34} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span className="accent-text" style={{ fontSize: 14, fontWeight: 700 }}>AXIOM</span>
+            <span style={{ color: "var(--text-secondary)", fontSize: 11 }}>• observing</span>
+          </div>
+          <div style={{ color: "var(--text-secondary)", fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {scenario?.title}
+          </div>
+        </div>
+        <div className={timerDanger ? "pulse-timer" : ""} style={{ fontSize: 20, fontWeight: 700, fontFamily: "monospace", color: timerDanger ? "var(--accent-danger)" : "var(--accent-primary)" }}>
+          {formatTime(remaining)}
+        </div>
+        {muteBtn}
+      </div>
+
+      {/* spacer for fixed header */}
+      <div style={{ height: 62, flexShrink: 0 }} />
+
+      <div className="terminal-window" style={{ padding: 0, flex: 1, display: "flex", flexDirection: "column", borderRadius: 0, border: "none", borderBottom: "1px solid var(--border)", overflow: "hidden" }}>
         <div aria-live="polite" aria-atomic="true" className="sr-only" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden" }}>
           {hook ?? ""}
-        </div>
-        {/* header panel — fixed at top so timer is always visible */}
-        <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 10, flexShrink: 0, position: "sticky", top: 0, zIndex: 10, background: "var(--bg-terminal)" }}>
-          <AxiomAvatar size={34} />
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span className="accent-text" style={{ fontSize: 14, fontWeight: 700 }}>AXIOM</span>
-              <span style={{ color: "var(--text-secondary)", fontSize: 11 }}>• observing</span>
-            </div>
-            <div style={{ color: "var(--text-secondary)", fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {scenario?.title}
-            </div>
-          </div>
-          {/* Timer */}
-          <div className={timerDanger ? "pulse-timer" : ""} style={{ fontSize: 16, fontWeight: 700, fontFamily: "monospace", color: timerDanger ? "var(--accent-danger)" : "var(--accent-primary)" }}>
-            {formatTime(remaining)}
-          </div>
-          {muteBtn}
         </div>
 
         {/* Always-visible brief — compact for mobile */}
