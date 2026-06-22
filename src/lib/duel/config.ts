@@ -13,6 +13,12 @@ export const VERDICT_MODEL = process.env.DUEL_VERDICT_MODEL ?? DEFAULT_MODEL;
 export const MAX_PLAYER_TURNS = 7;
 /** Max characters per player message (no limit — players speak/type freely). */
 export const MAX_MESSAGE_CHARS = Infinity;
+/** Total duel duration in seconds (7 minutes). */
+export const DUEL_DURATION_SECONDS = 420;
+/** Seconds remaining when the timer warning fires. */
+export const DUEL_WARNING_SECONDS = 30;
+/** Consecutive vague questions before AXIOM ends the meeting. */
+export const VAGUE_QUESTION_LIMIT = 3;
 /** Rahul's LinkedIn handle text, pre-typed into share copy. */
 export const RAHUL_MENTION = "@Rahul Kothari";
 /** Kill switch: when "true", the duel is paused. */
