@@ -303,11 +303,11 @@ export default function DuelClient() {
           {muteBtn}
         </div>
 
-        {/* Always-visible brief */}
-        <div style={{ padding: "8px 16px", borderBottom: "1px solid var(--border)", background: "var(--bg-primary)", fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.6, flexShrink: 0 }}>
-          <strong style={{ color: "var(--text-primary)" }}>{scenario?.buyer.name}</strong> · {scenario?.buyer.role} @ {scenario?.buyer.company}
-          {" · "}Pitching: <span style={{ color: "var(--text-primary)" }}>{scenario?.product}</span>
-          {" · "}Edge: <span style={{ color: "var(--accent-primary)" }}>{scenario?.sellerStrength}</span>
+        {/* Always-visible brief — compact for mobile */}
+        <div style={{ padding: "6px 16px", borderBottom: "1px solid var(--border)", background: "var(--bg-primary)", fontSize: 11, color: "var(--text-secondary)", flexShrink: 0, display: "flex", flexWrap: "wrap", gap: "2px 12px" }}>
+          <span><strong style={{ color: "var(--text-primary)" }}>{scenario?.buyer.name}</strong> @ {scenario?.buyer.company}</span>
+          <span>Pitching: <span style={{ color: "var(--text-primary)" }}>{scenario?.product}</span></span>
+          <span>Edge: <span style={{ color: "var(--accent-primary)" }}>{scenario?.sellerStrength}</span></span>
         </div>
 
         {/* conversation log — chat bubbles */}
