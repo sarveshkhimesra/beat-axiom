@@ -15,6 +15,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="theme-color" content="#060810" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
       <body className="antialiased min-h-screen">{children}</body>

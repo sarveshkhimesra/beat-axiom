@@ -279,42 +279,34 @@ export default function DuelClient() {
   const canSend = !timeUp;
   const timerDanger = remaining <= DUEL_WARNING_SECONDS;
   return (
-    <main style={{ ...wrap, display: "flex", flexDirection: "column", height: "100dvh", padding: 0 }}>
-      {/* header — fixed at viewport top, always visible */}
-      <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "var(--bg-terminal)", borderBottom: "1px solid var(--border)", padding: "12px 16px", display: "flex", alignItems: "center", gap: 10, maxWidth: 680, margin: "0 auto" }}>
-        <AxiomAvatar size={34} />
+    <main style={{ display: "flex", flexDirection: "column", height: "100dvh", overflow: "hidden", padding: 0, margin: 0 }}>
+      <div aria-live="polite" aria-atomic="true" className="sr-only" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden" }}>
+        {hook ?? ""}
+      </div>
+
+      {/* HEADER — flex-shrink:0, never scrolls */}
+      <div style={{ padding: "10px 16px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 10, flexShrink: 0, background: "var(--bg-terminal)" }}>
+        <AxiomAvatar size={30} />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span className="accent-text" style={{ fontSize: 14, fontWeight: 700 }}>AXIOM</span>
-            <span style={{ color: "var(--text-secondary)", fontSize: 11 }}>• observing</span>
-          </div>
           <div style={{ color: "var(--text-secondary)", fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {scenario?.title}
           </div>
         </div>
-        <div className={timerDanger ? "pulse-timer" : ""} style={{ fontSize: 20, fontWeight: 700, fontFamily: "monospace", color: timerDanger ? "var(--accent-danger)" : "var(--accent-primary)" }}>
+        <div className={timerDanger ? "pulse-timer" : ""} style={{ fontSize: 22, fontWeight: 700, fontFamily: "monospace", color: timerDanger ? "var(--accent-danger)" : "var(--accent-primary)" }}>
           {formatTime(remaining)}
         </div>
         {muteBtn}
       </div>
 
-      {/* spacer for fixed header */}
-      <div style={{ height: 62, flexShrink: 0 }} />
+      {/* BRIEF BAR — flex-shrink:0, never scrolls */}
+      <div style={{ padding: "6px 16px", borderBottom: "1px solid var(--border)", background: "var(--bg-primary)", fontSize: 11, color: "var(--text-secondary)", flexShrink: 0, display: "flex", flexWrap: "wrap", gap: "2px 12px" }}>
+        <span><strong style={{ color: "var(--text-primary)" }}>{scenario?.buyer.name}</strong> @ {scenario?.buyer.company}</span>
+        <span>Pitching: <span style={{ color: "var(--text-primary)" }}>{scenario?.product}</span></span>
+        <span>Edge: <span style={{ color: "var(--accent-primary)" }}>{scenario?.sellerStrength}</span></span>
+      </div>
 
-      <div className="terminal-window" style={{ padding: 0, flex: 1, display: "flex", flexDirection: "column", borderRadius: 0, border: "none", borderBottom: "1px solid var(--border)", overflow: "hidden" }}>
-        <div aria-live="polite" aria-atomic="true" className="sr-only" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden" }}>
-          {hook ?? ""}
-        </div>
-
-        {/* Always-visible brief — compact for mobile */}
-        <div style={{ padding: "6px 16px", borderBottom: "1px solid var(--border)", background: "var(--bg-primary)", fontSize: 11, color: "var(--text-secondary)", flexShrink: 0, display: "flex", flexWrap: "wrap", gap: "2px 12px" }}>
-          <span><strong style={{ color: "var(--text-primary)" }}>{scenario?.buyer.name}</strong> @ {scenario?.buyer.company}</span>
-          <span>Pitching: <span style={{ color: "var(--text-primary)" }}>{scenario?.product}</span></span>
-          <span>Edge: <span style={{ color: "var(--accent-primary)" }}>{scenario?.sellerStrength}</span></span>
-        </div>
-
-        {/* conversation log — chat bubbles */}
-        <div style={{ padding: "16px", flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10 }}>
+      {/* MESSAGES — only this section scrolls */}
+      <div style={{ padding: "16px", flex: 1, overflowY: "auto", minHeight: 0, display: "flex", flexDirection: "column", gap: 10 }}>
           {history.length === 0 && (
             <div className="system-msg">
               {scenario?.buyer.name} ({scenario?.buyer.role}) · 10 min · go
@@ -344,41 +336,39 @@ export default function DuelClient() {
           <div ref={endRef} />
         </div>
 
-        {/* input area */}
-        <div style={{ padding: "12px 16px", borderTop: "1px solid var(--border)", flexShrink: 0, background: "var(--bg-terminal)" }}>
-          {error && <div className="danger-text" style={{ fontSize: 13, marginBottom: 8 }}>[error] {error}</div>}
-          {canSend ? (
-            <div style={{ display: "flex", alignItems: "flex-end", gap: 8 }}>
-              <textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
-                placeholder="type your question..."
-                disabled={busy}
-                className="prompt-input"
-                rows={Math.min(4, Math.max(1, input.split("\n").length))}
-                style={{ fontSize: 16, resize: "none", lineHeight: 1.5, minHeight: 40, maxHeight: 120, overflowY: "auto" }}
-                aria-label="Type your sales question to the AI buyer"
-              />
-              <button onClick={send} disabled={busy || !input.trim()} className="btn-primary btn" style={{ padding: "10px 18px", minWidth: 44, minHeight: 44 }}>{"↵"}</button>
-            </div>
-          ) : (
-            <div style={{ color: "var(--text-secondary)", fontSize: 13 }}>
-              {"[axiom] time's up."}
-            </div>
-          )}
-          {/* End meeting early — visible after 1+ questions */}
-          {canSend && turnsUsed >= 1 && phase === "play" && !busy && (
-            <button onClick={getVerdict} style={{ marginTop: 10, padding: "8px 16px", borderRadius: 6, background: "none", border: "1px solid var(--border)", cursor: "pointer", fontSize: 13, color: "var(--text-secondary)", width: "100%", transition: "border-color 120ms" }}>
-              end meeting early &amp; get scored
-            </button>
-          )}
-          {(!canSend && phase === "play") && (
-            <button onClick={getVerdict} disabled={busy} className="glow-box" style={{ marginTop: 10, padding: "12px 20px", borderRadius: 8, background: "var(--accent-primary)", color: "#040d08", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, width: "100%" }}>
-              ./face-axiom
-            </button>
-          )}
-        </div>
+      {/* INPUT — flex-shrink:0, never scrolls */}
+      <div style={{ padding: "12px 16px", borderTop: "1px solid var(--border)", flexShrink: 0, background: "var(--bg-terminal)" }}>
+        {error && <div className="danger-text" style={{ fontSize: 13, marginBottom: 8 }}>[error] {error}</div>}
+        {canSend ? (
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 8 }}>
+            <textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
+              placeholder="type your question..."
+              disabled={busy}
+              className="prompt-input"
+              rows={Math.min(4, Math.max(1, input.split("\n").length))}
+              style={{ fontSize: 16, resize: "none", lineHeight: 1.5, minHeight: 40, maxHeight: 120, overflowY: "auto" }}
+              aria-label="Type your sales question to the AI buyer"
+            />
+            <button onClick={send} disabled={busy || !input.trim()} className="btn-primary btn" style={{ padding: "10px 18px", minWidth: 44, minHeight: 44 }}>{"↵"}</button>
+          </div>
+        ) : (
+          <div style={{ color: "var(--text-secondary)", fontSize: 13 }}>
+            {"[axiom] time's up."}
+          </div>
+        )}
+        {canSend && turnsUsed >= 1 && phase === "play" && !busy && (
+          <button onClick={getVerdict} style={{ marginTop: 10, padding: "8px 16px", borderRadius: 6, background: "none", border: "1px solid var(--border)", cursor: "pointer", fontSize: 13, color: "var(--text-secondary)", width: "100%", transition: "border-color 120ms" }}>
+            end meeting early &amp; get scored
+          </button>
+        )}
+        {(!canSend && phase === "play") && (
+          <button onClick={getVerdict} disabled={busy} className="glow-box" style={{ marginTop: 10, padding: "12px 20px", borderRadius: 8, background: "var(--accent-primary)", color: "#040d08", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, width: "100%" }}>
+            ./face-axiom
+          </button>
+        )}
       </div>
     </main>
   );
