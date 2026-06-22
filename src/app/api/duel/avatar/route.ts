@@ -62,12 +62,19 @@ export async function POST(req: NextRequest) {
       messages,
     });
     const reply = extractText(completion);
+
+    const vagueMatcher = /\[VAGUE:(true|false)\]\s*$/;
+    const vagueMatch = reply.match(vagueMatcher);
+    const vague = vagueMatch ? vagueMatch[1] === "true" : false;
+    const cleanReply = reply.replace(vagueMatcher, "").trim();
+
     const now = Date.now();
     return NextResponse.json({
       playerMessage: { role: "player", content: message, at: now } as DuelMessage,
-      buyerMessage: { role: "buyer", content: reply, at: now + 1 } as DuelMessage,
+      buyerMessage: { role: "buyer", content: cleanReply, at: now + 1 } as DuelMessage,
       turnsUsed: askedSoFar + 1,
       turnsLeft: MAX_PLAYER_TURNS - (askedSoFar + 1),
+      vague,
     });
   } catch (err) {
     const e = err as { status?: number; message?: string };

@@ -35,5 +35,12 @@ RULES:
 - Never break character. You are a real, warm, human person.
 - React to what they actually said; let the conversation flow. It's fine to occasionally ask them a question back.
 - Respond in 2–4 sentences. Plain text only. No emojis, no markdown, no preamble.
-- You have a limited meeting (~${MAX_PLAYER_TURNS} questions). Be helpful on direction, but make the valuable specifics earned.`;
+- You have a limited meeting (~${MAX_PLAYER_TURNS} questions). Be helpful on direction, but make the valuable specifics earned.
+
+VAGUE QUESTION DETECTION:
+After writing your reply, assess whether the salesperson's question was vague/generic (e.g. "what are your goals?", "tell me about your challenges", "what keeps you up at night?" — anything that requires zero preparation or research).
+On the VERY LAST LINE of your response, append exactly one of:
+[VAGUE:true]
+[VAGUE:false]
+This tag will be stripped before showing to the player. Be fair — a question is only vague if it could be asked to literally any buyer without modification.`;
 }
