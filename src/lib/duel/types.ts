@@ -1,4 +1,4 @@
-export type ScenarioId = "skeptical-vp" | "cutting-cfo" | "committee-gatekeeper";
+export type ScenarioId = "skeptical-vp" | "cutting-cfo" | "committee-gatekeeper" | "enthusiastic-champion" | "silent-evaluator";
 
 /** The buyer the player talks to (a single persona, AI-roleplayed). */
 export interface Buyer {

@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import { SCENARIOS, SCENARIO_IDS, getScenario, randomScenario } from "./scenarios";
 
 describe("scenarios", () => {
-  it("has exactly 3 scenarios keyed by id", () => {
-    expect(SCENARIO_IDS).toHaveLength(3);
+  it("has exactly 5 scenarios keyed by id", () => {
+    expect(SCENARIO_IDS).toHaveLength(5);
     for (const id of SCENARIO_IDS) expect(SCENARIOS[id].id).toBe(id);
   });
 

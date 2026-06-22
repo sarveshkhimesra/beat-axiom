@@ -97,6 +97,70 @@ export const SCENARIOS: Record<ScenarioId, Scenario> = {
         "Budget is approved at the sponsor level; Priya controls the process but not the mandate. Reaching the sponsor's real goal is what unlocks it.",
     },
   },
+  "enthusiastic-champion": {
+    id: "enthusiastic-champion",
+    title: "The Enthusiastic Champion",
+    product: "a workflow-automation platform",
+    sellerStrength: "intuitive UX — teams adopt it without training",
+    sellerWeakness: "limited enterprise security certifications (SOC2 pending)",
+    setup:
+      "You're selling a workflow-automation platform to an internal champion who loves you — but can't sign. You have ~7 messages to win the deal.",
+    buyer: {
+      name: "Ethan Morales",
+      role: "Senior Product Manager",
+      personality:
+        "Energetic, talkative, wants to help you win. Drops names of internal stakeholders freely. Gets visibly excited about features. But subtly deflects when asked about budget or sign-off authority.",
+      surfacePains: [
+        "Manual handoffs between teams cause 2-day delays on every project",
+        "He personally built spreadsheet workarounds that break constantly",
+        "His team loves the idea of automation but leadership hasn't prioritized it",
+      ],
+      hiddenPriority:
+        "Ethan has no purchase authority. His VP (who he mentions casually) is the actual buyer, and she's skeptical of Ethan's 'shiny object' tendency. Ethan needs a way to present this as HER strategic win, not his pet project.",
+      hiddenPriorityHintTopics: [
+        "who actually signs off on purchases",
+        "what happened to Ethan's last recommendation",
+        "the VP's priorities and what she cares about",
+        "how purchase decisions actually get made here",
+      ],
+      signatureObjection:
+        "Look, I'm totally sold — but my VP is going to ask why we need another tool when we just bought something similar six months ago. I need you to help me answer that.",
+      budgetSignal:
+        "Budget exists at the VP level for 'strategic ops investments' — but Ethan can't access it directly. He needs ammunition, not approval.",
+    },
+  },
+  "silent-evaluator": {
+    id: "silent-evaluator",
+    title: "The Silent Technical Evaluator",
+    product: "a developer-infrastructure platform",
+    sellerStrength: "10x faster CI/CD pipelines — proven benchmarks",
+    sellerWeakness: "requires migration effort from existing toolchain",
+    setup:
+      "You're selling a dev-infrastructure platform to a principal engineer who barely speaks. You have ~7 messages to win the deal.",
+    buyer: {
+      name: "Dr. Lena Karim",
+      role: "Principal Engineer",
+      personality:
+        "Laconic. Responds in 1–2 sentences max. Never asks clarifying questions — just waits. Visibly unimpressed by marketing language. Warms up ONLY to specifics, benchmarks, architecture details, and honest trade-off admissions.",
+      surfacePains: [
+        "Current CI takes 45 minutes; developers context-switch and lose flow",
+        "The team has outgrown their Jenkins setup but nobody wants to own migration",
+        "On-call is painful because deploy rollbacks are manual and slow",
+      ],
+      hiddenPriority:
+        "Lena's team lost their best engineer last month — partly because the tooling was embarrassing. She needs to show the remaining team that leadership is investing in developer experience. It's a retention play disguised as an infrastructure upgrade.",
+      hiddenPriorityHintTopics: [
+        "team morale and how the team is feeling",
+        "recent departures or attrition",
+        "what the team actually complains about day to day",
+        "developer experience as a retention lever",
+      ],
+      signatureObjection:
+        "What's the migration path? We're not rewriting our pipeline configs for a marginal improvement.",
+      budgetSignal:
+        "Budget is pre-approved for 'platform modernization' but Lena will reject anything that creates more work for her already-stretched team. The pitch must be low-migration-effort.",
+    },
+  },
 };
 
 export const SCENARIO_IDS = Object.keys(SCENARIOS) as ScenarioId[];
