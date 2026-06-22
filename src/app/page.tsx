@@ -58,18 +58,9 @@ export default function Home() {
             Sharpen your sales instincts <span className="accent-text glow">against an AI that fights back.</span>
           </h1>
 
-          <p style={{ color: "var(--text-secondary)", fontSize: "clamp(14px, 3.8vw, 17px)", margin: "0 0 32px 0" }}>
-            One AI buyer. Seven minutes. Can you close the deal?
+          <p style={{ color: "var(--text-secondary)", fontSize: "clamp(14px, 3.8vw, 17px)", margin: "0 0 0 0" }}>
+            One AI buyer. Seven minutes. Can you close the deal? Pick a scenario below and find out.
           </p>
-
-          {/* CTA */}
-          <Link
-            href="/duel"
-            className="glow-box"
-            style={{ display: "inline-block", padding: "14px 28px", background: "var(--accent-primary)", color: "#040d08", borderRadius: 8, fontSize: 17, fontWeight: 700, textDecoration: "none", letterSpacing: "0.03em" }}
-          >
-            ./start-duel<span className="cursor"></span>
-          </Link>
         </div>
       </div>
 
