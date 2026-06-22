@@ -104,7 +104,7 @@ export default function Home() {
         built by rahul kothari
       </p>
       <p style={{ marginTop: 8, fontSize: 11, color: "var(--text-secondary)", textAlign: "center", opacity: 0.6 }}>
-        A fictional sales-training simulation. All buyers and scenarios are invented.
+        A fictional sales-training simulation. All buyers and scenarios are invented. This is a personal project by Rahul Kothari and has no association with Razorpay.
       </p>
       <div style={{ marginTop: 16, textAlign: "center", fontSize: 11, opacity: 0.5 }}>
         <a href="/privacy" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Privacy</a>

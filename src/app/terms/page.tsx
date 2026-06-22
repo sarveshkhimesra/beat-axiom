@@ -32,7 +32,11 @@ export default function TermsPage() {
           <p style={{ marginBottom: 16 }}>
             All buyers, companies, and scenarios are fictional. Any resemblance to real persons is coincidental. The service is provided "as is" without warranty of any kind.
           </p>
-          <h2 style={{ color: "var(--accent-primary)", fontSize: 16, fontWeight: 600, margin: "20px 0 8px" }}>5. Changes</h2>
+          <h2 style={{ color: "var(--accent-primary)", fontSize: 16, fontWeight: 600, margin: "20px 0 8px" }}>5. Personal project</h2>
+          <p style={{ marginBottom: 16 }}>
+            Beat AXIOM is a personal project by Rahul Kothari, built in his individual capacity. It has no association with, endorsement from, or connection to Razorpay or any employer, past or present.
+          </p>
+          <h2 style={{ color: "var(--accent-primary)", fontSize: 16, fontWeight: 600, margin: "20px 0 8px" }}>6. Changes</h2>
           <p>
             These terms may change as the service evolves. Continued use after changes constitutes acceptance.
           </p>
