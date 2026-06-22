@@ -249,7 +249,7 @@ export default function DuelClient() {
           {history.length === 0 && (
             <div style={{ color: "var(--text-secondary)", fontSize: 13 }}>
               [session started] selling {scenario?.product} to {scenario?.buyer.name} ({scenario?.buyer.role})<br/>
-              [axiom] 7 minutes on the clock. make every question count. go.
+              [axiom] 7 minutes on the clock. go.
             </div>
           )}
           {history.map((m, i) => (
@@ -276,16 +276,17 @@ export default function DuelClient() {
         <div style={{ padding: "12px 16px", borderTop: "1px solid var(--border)", flexShrink: 0, background: "var(--bg-terminal)" }}>
           {error && <div className="danger-text" style={{ fontSize: 13, marginBottom: 8 }}>[error] {error}</div>}
           {canSend ? (
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span className="accent-text" style={{ fontSize: 14, userSelect: "none" }}>&gt;</span>
-              <input
+            <div style={{ display: "flex", alignItems: "flex-end", gap: 8 }}>
+              <span className="accent-text" style={{ fontSize: 14, userSelect: "none", paddingBottom: 10 }}>&gt;</span>
+              <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && send()}
+                onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
                 placeholder="type your question..."
                 disabled={busy}
                 className="prompt-input"
-                style={{ fontSize: 16 }}
+                rows={Math.min(4, Math.max(1, input.split("\n").length))}
+                style={{ fontSize: 16, resize: "none", lineHeight: 1.5, minHeight: 40, maxHeight: 120, overflowY: "auto" }}
                 aria-label="Type your sales question to the AI buyer"
               />
               <button onClick={send} disabled={busy || !input.trim()} className="btn-primary btn" style={{ padding: "10px 18px", minWidth: 44, minHeight: 44 }}>{"↵"}</button>

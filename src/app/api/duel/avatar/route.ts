@@ -108,8 +108,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       playerMessage: { role: "player", content: message, at: now } as DuelMessage,
       buyerMessage: { role: "buyer", content: cleanReply, at: now + 1 } as DuelMessage,
-      turnsUsed: askedSoFar + 1,
-      turnsLeft: MAX_PLAYER_TURNS - (askedSoFar + 1),
       vague,
     });
   } catch (err) {
