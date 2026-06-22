@@ -37,10 +37,19 @@ RULES:
 - Respond in 2–4 sentences. Plain text only. No emojis, no markdown, no preamble.
 - You have a limited meeting (~${MAX_PLAYER_TURNS} questions). Be helpful on direction, but make the valuable specifics earned.
 
-VAGUE QUESTION DETECTION:
-After writing your reply, assess whether the salesperson's question was vague/generic (e.g. "what are your goals?", "tell me about your challenges", "what keeps you up at night?" — anything that requires zero preparation or research).
-On the VERY LAST LINE of your response, append exactly one of:
+MANDATORY OUTPUT FORMAT:
+You MUST end every single response with a vague assessment tag on its own line. This is non-negotiable.
+
+After your in-character reply, add a blank line, then EXACTLY one of these tags:
 [VAGUE:true]
 [VAGUE:false]
-This tag will be stripped before showing to the player. Be fair — a question is only vague if it could be asked to literally any buyer without modification.`;
+
+A question is VAGUE if it could be asked to literally any buyer without modification — "what are your goals?", "tell me about your challenges", "what keeps you up at night?", "what's important to you?" are all vague. A question that references something specific you said, your industry, your role, or your situation is NOT vague.
+
+Example output format:
+I appreciate you asking, but we tried something similar last year and it didn't stick. What makes your approach different from what we've already seen?
+
+[VAGUE:false]
+
+NEVER skip this tag. EVERY response must end with [VAGUE:true] or [VAGUE:false].`;
 }

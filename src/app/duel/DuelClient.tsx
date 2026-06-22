@@ -235,16 +235,6 @@ export default function DuelClient() {
               {scenario?.title} — {turnsUsed}/{MAX_PLAYER_TURNS} questions
             </div>
           </div>
-          {/* End meeting early */}
-          {turnsUsed >= 1 && phase === "play" && !busy && (
-            <button
-              onClick={getVerdict}
-              style={{ background: "none", border: "1px solid var(--border)", borderRadius: 6, padding: "4px 10px", cursor: "pointer", color: "var(--text-secondary)", fontSize: 11, whiteSpace: "nowrap", transition: "border-color 120ms" }}
-              title="End meeting early and get scored"
-            >
-              end meeting
-            </button>
-          )}
           {/* Timer */}
           <div className={timerDanger ? "pulse-timer" : ""} style={{ fontSize: 16, fontWeight: 700, fontFamily: "monospace", color: timerDanger ? "var(--accent-danger)" : "var(--accent-primary)" }}>
             {formatTime(remaining)}
@@ -302,6 +292,12 @@ export default function DuelClient() {
             <div style={{ color: "var(--text-secondary)", fontSize: 13 }}>
               {timeUp ? "[axiom] time's up." : "[axiom] no questions remaining."}
             </div>
+          )}
+          {/* End meeting early — visible after 1+ questions */}
+          {canSend && turnsUsed >= 1 && phase === "play" && !busy && (
+            <button onClick={getVerdict} style={{ marginTop: 10, padding: "8px 16px", borderRadius: 6, background: "none", border: "1px solid var(--border)", cursor: "pointer", fontSize: 13, color: "var(--text-secondary)", width: "100%", transition: "border-color 120ms" }}>
+              end meeting early &amp; get scored
+            </button>
           )}
           {(!canSend && phase === "play") && (
             <button onClick={getVerdict} disabled={busy} className="glow-box" style={{ marginTop: 10, padding: "12px 20px", borderRadius: 8, background: "var(--accent-primary)", color: "#040d08", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 700, width: "100%" }}>

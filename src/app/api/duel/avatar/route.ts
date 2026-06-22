@@ -82,10 +82,26 @@ export async function POST(req: NextRequest) {
     });
     const reply = extractText(completion);
 
-    // FIX 4: Global vague regex — handles tag anywhere in response, uses last match
+    // Vague detection: parse LLM tag, fallback to heuristic if model didn't tag
     const vagueMatcher = /\[VAGUE:(true|false)\]/g;
     const vagueMatches = reply.match(vagueMatcher);
-    const vague = vagueMatches ? vagueMatches[vagueMatches.length - 1].includes("true") : false;
+    let vague: boolean;
+    if (vagueMatches) {
+      vague = vagueMatches[vagueMatches.length - 1].includes("true");
+    } else {
+      // Fallback heuristic: detect obviously generic questions
+      const lower = message.toLowerCase().trim();
+      const vaguePatterns = [
+        /^what are your (goals|challenges|priorities|pain points)/,
+        /^tell me about your (challenges|goals|business|company)/,
+        /^what keeps you up at night/,
+        /^what('s| is) (important|top of mind) (to|for) you/,
+        /^how('s| is) (business|everything|things)/,
+        /^what can (i|we) (help|do) for you/,
+        /^what (do you|are you) looking for/,
+      ];
+      vague = vaguePatterns.some(p => p.test(lower));
+    }
     const cleanReply = reply.replace(vagueMatcher, "").trim();
 
     const now = Date.now();
