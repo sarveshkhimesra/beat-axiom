@@ -82,18 +82,17 @@ export default function Home() {
                 transition: "border-color 120ms",
               }}
             >
-              <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
-                <span className="accent-text" style={{ fontSize: "clamp(16px, 4vw, 19px)", fontWeight: 600 }}>
-                  {CLIENT_SCENARIOS[id].title}
-                </span>
-                <span style={{ fontSize: 12, color: "var(--text-secondary)", opacity: 0.7 }}>
-                  your pitch: {CLIENT_SCENARIOS[id].product}
-                </span>
+              <div className="accent-text" style={{ fontSize: "clamp(16px, 4vw, 19px)", fontWeight: 600, marginBottom: 8 }}>
+                {CLIENT_SCENARIOS[id].title}
               </div>
               <div style={{ color: "var(--text-secondary)", fontSize: "clamp(13px, 3.5vw, 15px)", lineHeight: 1.6 }}>
                 {CARD_COPY[id].map((line, i) => (
                   <span key={i}>{line}{i < CARD_COPY[id].length - 1 ? " " : ""}</span>
                 ))}
+              </div>
+              <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid var(--border)", fontSize: 12, color: "var(--text-secondary)" }}>
+                <span style={{ opacity: 0.6 }}>your pitch:</span>{" "}
+                <span style={{ color: "var(--text-primary)", opacity: 0.85 }}>{CLIENT_SCENARIOS[id].product}</span>
               </div>
             </Link>
           ))}
