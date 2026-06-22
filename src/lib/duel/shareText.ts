@@ -7,11 +7,11 @@ export function buildShareText(verdict: Verdict, shareUrl: string): string {
   const roast = verdict.roast.replace(/\s+/g, " ").trim();
   const snippet = roast.length > 140 ? roast.slice(0, 137).trimEnd() + "…" : roast;
   return [
-    `AXIOM — the AI ${RAHUL_MENTION} built to grade sales conversations — gave me a ${verdict.score}/100 ("${verdict.title}").`,
+    `Just played Beat AXIOM — the AI sales game ${RAHUL_MENTION} built — and scored ${verdict.score}/100 ("${verdict.title}").`,
     "",
-    `Its verdict: "${snippet}"`,
+    `AXIOM's take: "${snippet}"`,
     "",
-    `Think you can beat me? 7 questions, one shot 👇`,
+    `7 minutes. 1 AI buyer. Can you beat my score? 👇`,
     shareUrl,
   ].join("\n");
 }

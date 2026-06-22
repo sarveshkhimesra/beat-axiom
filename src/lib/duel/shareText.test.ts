@@ -21,4 +21,9 @@ describe("buildShareText", () => {
     const t = buildShareText(verdict, "https://x.test/r/abc");
     expect(t.toLowerCase()).toContain("hostage");
   });
+  it("includes the new wording for game play and challenge", () => {
+    const t = buildShareText(verdict, "https://x.test/r/abc");
+    expect(t).toContain("Just played Beat AXIOM");
+    expect(t).toContain("Can you beat my score?");
+  });
 });
