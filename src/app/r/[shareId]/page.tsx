@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { getSession } from "@/lib/duel/store";
-import { buildShareText } from "@/lib/duel/shareText";
+import { buildLinkedInShareText, buildTwitterShareText } from "@/lib/duel/shareText";
 import ShareButtons from "./ShareButtons";
 import AxiomAvatar from "@/components/AxiomAvatar";
 
@@ -37,8 +37,8 @@ export async function generateMetadata({ params }: { params: Promise<{ shareId: 
     },
     twitter: {
       card: "summary_large_image",
-      site: "@rahulkothari",
-      creator: "@rahulkothari",
+      site: "@rahul_kothari",
+      creator: "@rahul_kothari",
       title,
       description,
       images: [ogUrl],
@@ -71,7 +71,8 @@ export default async function ScorecardPage({ params }: { params: Promise<{ shar
   }
   const v = session.verdict;
   const shareUrl = `${baseUrl()}/r/${session.shareId}`;
-  const postText = buildShareText(v, shareUrl);
+  const linkedInText = buildLinkedInShareText(v, shareUrl);
+  const twitterText = buildTwitterShareText(v, shareUrl);
   return (
     <main style={{ maxWidth: 680, margin: "0 auto", padding: "clamp(16px, 4vw, 40px)", width: "100%", boxSizing: "border-box" }}>
       <div className="terminal-window" style={{ padding: 0 }}>
@@ -114,7 +115,7 @@ export default async function ScorecardPage({ params }: { params: Promise<{ shar
       </div>
 
       {/* share + CTA */}
-      <ShareButtons shareUrl={shareUrl} postText={postText} />
+      <ShareButtons shareUrl={shareUrl} linkedInText={linkedInText} twitterText={twitterText} />
       <div style={{ marginTop: 24, textAlign: "center" }}>
         <Link href="/" className="accent-text" style={{ fontSize: 16 }}>$ ./start-duel — try again</Link>
       </div>

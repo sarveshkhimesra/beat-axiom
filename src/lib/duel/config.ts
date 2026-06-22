@@ -11,5 +11,6 @@ export const DUEL_DURATION_SECONDS = 600;
 export const DUEL_WARNING_SECONDS = 30;
 /** Consecutive vague questions before AXIOM ends the meeting. */
 export const VAGUE_QUESTION_LIMIT = 3;
-/** Rahul's LinkedIn handle text, pre-typed into share copy. */
-export const RAHUL_MENTION = "@Rahul Kothari";
+/** Rahul's handle text for share copy (LinkedIn uses name, Twitter uses handle). */
+export const RAHUL_MENTION_LINKEDIN = "@Rahul Kothari";
+export const RAHUL_MENTION_TWITTER = "@rahul_kothari";

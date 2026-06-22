@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildShareText } from "./shareText";
+import { buildLinkedInShareText, buildTwitterShareText } from "./shareText";
 import { Verdict } from "./types";
 
 const verdict: Verdict = {
@@ -10,20 +10,29 @@ const verdict: Verdict = {
   didDetectSignal: true, didHandleObjection: false,
 };
 
-describe("buildShareText", () => {
-  it("includes the score, the Rahul mention, and the link", () => {
-    const t = buildShareText(verdict, "https://x.test/r/abc");
+describe("buildLinkedInShareText", () => {
+  it("includes the score, the LinkedIn mention, and the link", () => {
+    const t = buildLinkedInShareText(verdict, "https://x.test/r/abc");
     expect(t).toContain("62");
     expect(t).toContain("@Rahul Kothari");
     expect(t).toContain("https://x.test/r/abc");
   });
   it("includes a roast snippet", () => {
-    const t = buildShareText(verdict, "https://x.test/r/abc");
+    const t = buildLinkedInShareText(verdict, "https://x.test/r/abc");
     expect(t.toLowerCase()).toContain("hostage");
   });
-  it("includes the new wording for game play and challenge", () => {
-    const t = buildShareText(verdict, "https://x.test/r/abc");
-    expect(t).toContain("Just played Beat AXIOM");
-    expect(t).toContain("Can you beat my score?");
+});
+
+describe("buildTwitterShareText", () => {
+  it("includes the score, the Twitter handle, and the link", () => {
+    const t = buildTwitterShareText(verdict, "https://x.test/r/abc");
+    expect(t).toContain("62");
+    expect(t).toContain("@rahul_kothari");
+    expect(t).toContain("https://x.test/r/abc");
+  });
+  it("fits within 280 chars (with 23-char t.co URL)", () => {
+    const t = buildTwitterShareText(verdict, "https://x.test/r/abc");
+    const withTco = t.replace("https://x.test/r/abc", "https://t.co/xxxxxxxxxxxx");
+    expect(withTco.length).toBeLessThanOrEqual(280);
   });
 });

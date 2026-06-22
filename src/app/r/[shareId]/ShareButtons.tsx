@@ -3,15 +3,14 @@
 import { useEffect, useState } from "react";
 import { sfx } from "@/lib/duel/sfx";
 
-/** Share bar for a scorecard. LinkedIn can only take a URL (it unfurls into the
- * OG card), so the @Rahul caption is copied to the clipboard for the user to
- * paste. X/Twitter accepts pre-filled text directly. */
 export default function ShareButtons({
   shareUrl,
-  postText,
+  linkedInText,
+  twitterText,
 }: {
   shareUrl: string;
-  postText: string;
+  linkedInText: string;
+  twitterText: string;
 }) {
   const [copied, setCopied] = useState(false);
   const [hint, setHint] = useState<string | null>(null);
@@ -22,11 +21,11 @@ export default function ShareButtons({
   }, []);
 
   const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
-  const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(postText)}`;
+  const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterText)}`;
 
   async function copyCaption(): Promise<boolean> {
     try {
-      await navigator.clipboard.writeText(postText);
+      await navigator.clipboard.writeText(linkedInText);
       return true;
     } catch {
       return false;
