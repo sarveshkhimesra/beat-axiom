@@ -200,6 +200,16 @@ export default function DuelClient() {
               {scenario?.title} — {turnsUsed}/{MAX_PLAYER_TURNS} questions
             </div>
           </div>
+          {/* End meeting early */}
+          {turnsUsed >= 1 && phase === "play" && !busy && (
+            <button
+              onClick={getVerdict}
+              style={{ background: "none", border: "1px solid var(--border)", borderRadius: 6, padding: "4px 10px", cursor: "pointer", color: "var(--text-secondary)", fontSize: 11, whiteSpace: "nowrap", transition: "border-color 120ms" }}
+              title="End meeting early and get scored"
+            >
+              end meeting
+            </button>
+          )}
           {/* Timer */}
           <div className={timerDanger ? "pulse-timer" : ""} style={{ fontSize: 16, fontWeight: 700, fontFamily: "monospace", color: timerDanger ? "var(--accent-danger)" : "var(--accent-primary)" }}>
             {formatTime(remaining)}
