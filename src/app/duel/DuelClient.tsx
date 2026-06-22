@@ -3,22 +3,24 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CLIENT_SCENARIOS, CLIENT_SCENARIO_IDS } from "@/lib/duel/scenarios-client";
-import { MAX_PLAYER_TURNS, DUEL_DURATION_SECONDS, DUEL_WARNING_SECONDS, VAGUE_QUESTION_LIMIT } from "@/lib/duel/config";
+import { DUEL_DURATION_SECONDS, DUEL_WARNING_SECONDS, VAGUE_QUESTION_LIMIT } from "@/lib/duel/config";
 import { DuelMessage, ScenarioId } from "@/lib/duel/types";
 import { sfx, isMuted, setMuted } from "@/lib/duel/sfx";
 import AxiomAvatar from "@/components/AxiomAvatar";
 
 type Phase = "pick" | "play" | "scoring";
 
-function hookFor(left: number): string {
-  if (left <= 0) return "[axiom] out of questions — time to face the verdict.";
+function hookFor(turnNumber: number): string {
   const lines = [
-    `[axiom] good going — ${left} to go.`,
-    `[axiom] nice probe. ${left} left — keep digging.`,
-    `[axiom] you're onto something. ${left} to go.`,
-    `[axiom] sharp. ${left} left to close the deal.`,
+    "[axiom] good start — keep going.",
+    "[axiom] nice probe — keep digging.",
+    "[axiom] you're onto something.",
+    "[axiom] sharp. clock's ticking.",
+    "[axiom] getting somewhere — push deeper.",
+    "[axiom] don't let up now.",
+    "[axiom] keep the pressure on.",
   ];
-  return lines[(MAX_PLAYER_TURNS - left) % lines.length];
+  return lines[(turnNumber - 1) % lines.length];
 }
 
 function formatTime(seconds: number): string {
@@ -172,7 +174,7 @@ export default function DuelClient() {
         setVagueStreak(0);
       }
 
-      setHook(hookFor(MAX_PLAYER_TURNS - (turnsUsed + 1)));
+      setHook(hookFor(turnsUsed + 1));
     } catch (e) { setError((e as Error).message); }
     finally { setBusy(false); busyRef.current = false; }
   }
@@ -215,7 +217,7 @@ export default function DuelClient() {
   }
 
   // === PLAY + SCORING PHASE ===
-  const canSend = turnsUsed < MAX_PLAYER_TURNS && !timeUp;
+  const canSend = !timeUp;
   const timerDanger = remaining <= DUEL_WARNING_SECONDS;
   return (
     <main style={{ ...wrap, display: "flex", flexDirection: "column", height: "100dvh", padding: 0 }}>
@@ -232,7 +234,7 @@ export default function DuelClient() {
               <span style={{ color: "var(--text-secondary)", fontSize: 11 }}>• observing</span>
             </div>
             <div style={{ color: "var(--text-secondary)", fontSize: 12, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {scenario?.title} — {turnsUsed}/{MAX_PLAYER_TURNS} questions
+              {scenario?.title}
             </div>
           </div>
           {/* Timer */}
@@ -290,7 +292,7 @@ export default function DuelClient() {
             </div>
           ) : (
             <div style={{ color: "var(--text-secondary)", fontSize: 13 }}>
-              {timeUp ? "[axiom] time's up." : "[axiom] no questions remaining."}
+              {"[axiom] time's up."}
             </div>
           )}
           {/* End meeting early — visible after 1+ questions */}
