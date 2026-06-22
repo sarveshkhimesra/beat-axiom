@@ -14,9 +14,10 @@ function baseUrl(): string {
   return "http://localhost:3000";
 }
 
-export async function generateMetadata({ params }: { params: { shareId: string } }): Promise<Metadata> {
-  const session = await getSession(params.shareId);
-  const ogUrl = `${baseUrl()}/og/${params.shareId}`;
+export async function generateMetadata({ params }: { params: Promise<{ shareId: string }> }): Promise<Metadata> {
+  const { shareId } = await params;
+  const session = await getSession(shareId);
+  const ogUrl = `${baseUrl()}/og/${shareId}`;
   const title = session
     ? `I scored ${session.verdict.score}/100 on Beat AXIOM — "${session.verdict.title}"`
     : "Beat AXIOM — an AI sales duel by Rahul Kothari";
@@ -42,8 +43,9 @@ export async function generateMetadata({ params }: { params: { shareId: string }
   };
 }
 
-export default async function ScorecardPage({ params }: { params: { shareId: string } }) {
-  const session = await getSession(params.shareId);
+export default async function ScorecardPage({ params }: { params: Promise<{ shareId: string }> }) {
+  const { shareId } = await params;
+  const session = await getSession(shareId);
   if (!session) {
     return (
       <main style={{ maxWidth: 640, margin: "0 auto", padding: 48 }}>
