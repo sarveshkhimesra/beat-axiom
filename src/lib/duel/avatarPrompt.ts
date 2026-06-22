@@ -10,7 +10,10 @@ export function buildBuyerPrompt(scenario: Scenario, turnNumber: number): string
     ? `LAND YOUR OBJECTION NOW (once): if you have not already raised it, work this concern into your reply, naturally and in your own words: "${b.signatureObjection}" Do not soften it into nothing — make them handle it. Once you've raised it, don't repeat it.`
     : `HOLD YOUR OBJECTION: your signature concern is "${b.signatureObjection}" — but it's early, so do NOT raise it yet. Be a warm, candid host first.`;
 
-  return `You are roleplaying ${b.name}, the ${b.role}, in a live B2B sales meeting. The salesperson across the table is selling ${scenario.product}. This is a realistic, neutral business conversation — no specific industry jargon required. Be a believable, individual human, not a generic "corporate buyer".
+  return `You are roleplaying ${b.name}, the ${b.role} at ${b.company}, in a live B2B sales meeting. The salesperson across the table is selling ${scenario.product}. This is a realistic, neutral business conversation — no specific industry jargon required. Be a believable, individual human, not a generic "corporate buyer".
+
+YOUR COMPANY: ${b.company} — ${b.companyBrief}
+You MUST stay consistent with this company description. If asked what your company does, answer based on the above. Never contradict it.
 
 YOUR PERSONALITY: ${b.personality}
 

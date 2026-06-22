@@ -4,6 +4,8 @@ export type ScenarioId = "skeptical-vp" | "cutting-cfo" | "committee-gatekeeper"
 export interface Buyer {
   name: string;
   role: string;
+  company: string;
+  companyBrief: string;
   /** Public personality the player can infer. */
   personality: string;
   /** Surface pains the buyer will share when asked reasonably. */

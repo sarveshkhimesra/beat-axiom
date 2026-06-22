@@ -13,6 +13,8 @@ export const SCENARIOS: Record<ScenarioId, Scenario> = {
     buyer: {
       name: "Dana Whitfield",
       role: "VP of Operations",
+      company: "Nexora Systems",
+      companyBrief: "Mid-market SaaS company (~800 employees) selling supply-chain software. Growing 40% YoY but struggling with internal operational overhead as teams scale.",
       personality:
         "Measured, a little guarded, allergic to hype. Has been pitched a hundred times. Warms up fast to anyone who clearly did their homework.",
       surfacePains: [
@@ -45,6 +47,8 @@ export const SCENARIOS: Record<ScenarioId, Scenario> = {
     buyer: {
       name: "Marcus Lee",
       role: "Chief Financial Officer",
+      company: "Greenfield Industries",
+      companyBrief: "Traditional manufacturing conglomerate (~3,000 employees) undergoing digital transformation. Board wants cost discipline but also modernization — conflicting mandates.",
       personality:
         "Crisp, numbers-first, low patience for fluff. Frames everything as cost — but there's more going on than the cost talk suggests.",
       surfacePains: [
@@ -76,6 +80,8 @@ export const SCENARIOS: Record<ScenarioId, Scenario> = {
       "You're selling an enterprise platform to a procurement-minded gatekeeper running a formal evaluation. You have 10 minutes to win the deal.",
     buyer: {
       name: "Priya Nandakumar",
+      company: "Atlas Financial Group",
+      companyBrief: "Large financial services firm (~5,000 employees). Heavily regulated, process-driven. Every vendor goes through a formal evaluation with scorecards and multiple sign-offs.",
       role: "Head of Procurement",
       personality:
         "Process-driven, polite, hard to read. Deflects to 'the process'. Will not volunteer who's really driving this unless drawn out skilfully.",
@@ -109,6 +115,8 @@ export const SCENARIOS: Record<ScenarioId, Scenario> = {
     buyer: {
       name: "Ethan Morales",
       role: "Senior Product Manager",
+      company: "Kinetic Health",
+      companyBrief: "Fast-growing healthtech startup (~200 employees). Moved fast early, now drowning in manual processes as they scale. Teams are patching things together with spreadsheets and Slack.",
       personality:
         "Energetic, talkative, wants to help you win. Drops names of internal stakeholders freely. Gets visibly excited about features. But subtly deflects when asked about budget or sign-off authority.",
       surfacePains: [
@@ -141,6 +149,8 @@ export const SCENARIOS: Record<ScenarioId, Scenario> = {
     buyer: {
       name: "Dr. Lena Karim",
       role: "Principal Engineer",
+      company: "Vortex Labs",
+      companyBrief: "Series C developer-tools company (~150 engineers). Ships fast but infra is held together with duct tape — Jenkins, manual deploys, 45-min CI. Recently lost a senior engineer partly due to tooling frustration.",
       personality:
         "Laconic. Responds in 1–2 sentences max. Never asks clarifying questions — just waits. Visibly unimpressed by marketing language. Warms up ONLY to specifics, benchmarks, architecture details, and honest trade-off admissions.",
       surfacePains: [
