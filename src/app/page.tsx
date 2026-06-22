@@ -87,7 +87,7 @@ export default function Home() {
                   {CLIENT_SCENARIOS[id].title}
                 </span>
                 <span style={{ fontSize: 12, color: "var(--text-secondary)", opacity: 0.7 }}>
-                  selling {CLIENT_SCENARIOS[id].product}
+                  your pitch: {CLIENT_SCENARIOS[id].product}
                 </span>
               </div>
               <div style={{ color: "var(--text-secondary)", fontSize: "clamp(13px, 3.5vw, 15px)", lineHeight: 1.6 }}>
