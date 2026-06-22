@@ -193,7 +193,7 @@ export default function DuelClient() {
               <AxiomAvatar size={40} />
               <div>
                 <div className="accent-text" style={{ fontSize: 15, fontWeight: 700 }}>AXIOM</div>
-                <div style={{ color: "var(--text-secondary)", fontSize: 11 }}>select scenario // 7 minutes each</div>
+                <div style={{ color: "var(--text-secondary)", fontSize: 11 }}>select scenario // 10 minutes each</div>
               </div>
               <div style={{ marginLeft: "auto" }}>{muteBtn}</div>
             </div>
@@ -233,10 +233,22 @@ export default function DuelClient() {
               <p style={{ color: "var(--text-secondary)", fontSize: 15, lineHeight: 1.7, margin: "0 0 16px 0" }}>
                 {scenario.setup}
               </p>
-              <div style={{ padding: "12px 14px", background: "var(--bg-primary)", borderRadius: 8, border: "1px solid var(--border)" }}>
-                <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6 }}>you are meeting:</div>
-                <div style={{ fontSize: 15, color: "var(--text-primary)" }}>
-                  <strong>{scenario.buyer.name}</strong> — {scenario.buyer.role}
+
+              <div style={{ display: "grid", gap: 10, marginBottom: 0 }}>
+                <div style={{ padding: "12px 14px", background: "var(--bg-primary)", borderRadius: 8, border: "1px solid var(--border)" }}>
+                  <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6 }}>you are selling:</div>
+                  <div style={{ fontSize: 15, color: "var(--text-primary)" }}>
+                    <strong>{scenario.product}</strong>
+                  </div>
+                  <div style={{ fontSize: 13, color: "var(--accent-primary)", marginTop: 4 }}>
+                    your edge: {scenario.sellerStrength}
+                  </div>
+                </div>
+                <div style={{ padding: "12px 14px", background: "var(--bg-primary)", borderRadius: 8, border: "1px solid var(--border)" }}>
+                  <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6 }}>you are meeting:</div>
+                  <div style={{ fontSize: 15, color: "var(--text-primary)" }}>
+                    <strong>{scenario.buyer.name}</strong> — {scenario.buyer.role}
+                  </div>
                 </div>
               </div>
             </div>
@@ -246,7 +258,7 @@ export default function DuelClient() {
               className="glow-box"
               style={{ width: "100%", padding: "14px 28px", background: "var(--accent-primary)", color: "#040d08", borderRadius: 8, fontSize: 16, fontWeight: 700, border: "none", cursor: "pointer", letterSpacing: "0.03em" }}
             >
-              start meeting — 7:00 begins
+              start meeting — 10:00 begins
             </button>
           </div>
         </div>
@@ -283,16 +295,17 @@ export default function DuelClient() {
         </div>
 
         {/* Always-visible brief */}
-        <div style={{ padding: "8px 16px", borderBottom: "1px solid var(--border)", background: "var(--bg-primary)", fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5, flexShrink: 0 }}>
-          <span style={{ color: "var(--accent-primary)", fontWeight: 600 }}>Brief:</span>{" "}
-          {scenario?.setup} — Meeting with <strong style={{ color: "var(--text-primary)" }}>{scenario?.buyer.name}</strong> ({scenario?.buyer.role})
+        <div style={{ padding: "8px 16px", borderBottom: "1px solid var(--border)", background: "var(--bg-primary)", fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.6, flexShrink: 0 }}>
+          <strong style={{ color: "var(--text-primary)" }}>{scenario?.buyer.name}</strong> ({scenario?.buyer.role})
+          {" · "}Pitching: <span style={{ color: "var(--text-primary)" }}>{scenario?.product}</span>
+          {" · "}Edge: <span style={{ color: "var(--accent-primary)" }}>{scenario?.sellerStrength}</span>
         </div>
 
         {/* conversation log — chat bubbles */}
         <div style={{ padding: "16px", flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10 }}>
           {history.length === 0 && (
             <div className="system-msg">
-              {scenario?.buyer.name} ({scenario?.buyer.role}) · 7 min · go
+              {scenario?.buyer.name} ({scenario?.buyer.role}) · 10 min · go
             </div>
           )}
           {history.map((m, i) => (

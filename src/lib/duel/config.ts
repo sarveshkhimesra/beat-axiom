@@ -5,8 +5,8 @@
 export const MAX_PLAYER_TURNS = 7;
 /** Max characters per player message (no limit — players speak/type freely). */
 export const MAX_MESSAGE_CHARS = Infinity;
-/** Total duel duration in seconds (7 minutes). */
-export const DUEL_DURATION_SECONDS = 420;
+/** Total duel duration in seconds (10 minutes). */
+export const DUEL_DURATION_SECONDS = 600;
 /** Seconds remaining when the timer warning fires. */
 export const DUEL_WARNING_SECONDS = 30;
 /** Consecutive vague questions before AXIOM ends the meeting. */

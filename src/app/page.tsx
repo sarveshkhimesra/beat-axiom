@@ -55,7 +55,7 @@ export default function Home() {
           </h1>
 
           <p style={{ color: "var(--text-secondary)", fontSize: "clamp(14px, 3.8vw, 17px)", margin: "0 0 0 0" }}>
-            One AI buyer. Seven minutes. Can you close the deal? Pick a scenario below and find out.
+            One AI buyer. Ten minutes. Can you close the deal? Pick a scenario below and find out.
           </p>
         </div>
       </div>
