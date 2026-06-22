@@ -28,12 +28,19 @@ ${dims}
 PENALTIES (subtract from the relevant dimensions, reflected in the final score):
 ${PENALTIES.map((p) => `  - ${p}`).join("\n")}
 
+SCORING FLOOR RULES (non-negotiable):
+- If the salesperson asked fewer than 3 real questions, their max score is 10. Period.
+- If the transcript is essentially empty (greetings, one-liners, no discovery attempt), score is 0.
+- "Hi", "Hello", small talk with zero selling intent = score 0, every dimension 0.
+- Do NOT give pity points. A dimension score of 0 means they did NOTHING in that area. That's a valid score.
+- Be honest: if they didn't attempt discovery, discovery = 0. If they didn't handle the objection (because it never came up due to too few turns), objection = 0.
+
 ASSESS:
 - didDetectSignal: did they earn at least a partial reveal of the hidden priority?
 - didHandleObjection: did they acknowledge + reframe + back the objection with substance (vs deflect/ignore)?
-- Pick a TITLE that fits their actual behaviour (examples: "Closer", "Operator", "Happy Ears", "The Brochure" for pitching too early, "Hostage" for getting steamrolled). One or two words.
-- bestLine / worstLine: quote their actual words (trim to one sentence).
-- roast: 2–3 sentences in your voice, following the style guide.
+- Pick a TITLE that fits their actual behaviour (examples: "Closer", "Operator", "Happy Ears", "The Brochure" for pitching too early, "Ghost" for barely showing up, "The Greeter" for just saying hi). One or two words.
+- bestLine / worstLine: quote their actual words (trim to one sentence). If they only said "Hi", bestLine and worstLine are both "Hi".
+- roast: 2–3 sentences in your voice, following the style guide. Short transcripts get short roasts.
 
 OUTPUT — return ONLY this JSON object, no prose, no markdown fences:
 {
