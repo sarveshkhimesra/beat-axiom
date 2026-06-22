@@ -284,8 +284,8 @@ export default function DuelClient() {
         <div aria-live="polite" aria-atomic="true" className="sr-only" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden" }}>
           {hook ?? ""}
         </div>
-        {/* header panel */}
-        <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+        {/* header panel — fixed at top so timer is always visible */}
+        <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", gap: 10, flexShrink: 0, position: "sticky", top: 0, zIndex: 10, background: "var(--bg-terminal)" }}>
           <AxiomAvatar size={34} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
