@@ -70,14 +70,14 @@ export default async function Home() {
           <p style={{ color: "var(--text-secondary)", fontSize: "clamp(14px, 3.8vw, 17px)", margin: "0 0 12px 0" }}>
             One AI buyer. Ten minutes. Can you close the deal? Pick a scenario below and find out.
           </p>
-          <div className="glow-box" style={{ marginTop: 24, display: "flex", alignItems: "center", justifyContent: "center", gap: 16, padding: "20px 24px", borderRadius: 12, background: "linear-gradient(135deg, rgba(0, 245, 160, 0.1) 0%, rgba(123, 47, 255, 0.08) 100%)", border: "1px solid rgba(0, 245, 160, 0.3)", width: "100%" }}>
+          <div className="player-count-banner" style={{ marginTop: 24, display: "flex", alignItems: "center", justifyContent: "center", gap: 16, padding: "20px 24px", borderRadius: 12, background: "linear-gradient(135deg, rgba(0, 245, 160, 0.12) 0%, rgba(123, 47, 255, 0.1) 100%)", width: "100%", position: "relative", overflow: "hidden" }}>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <span style={{ fontSize: 36, fontWeight: 800, color: "var(--accent-primary)", lineHeight: 1 }}>{playerCount}</span>
-              <span style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>players</span>
+              <span className="glow" style={{ fontSize: 40, fontWeight: 800, color: "var(--accent-primary)", lineHeight: 1 }}>{playerCount}</span>
+              <span style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 4 }}>players</span>
             </div>
-            <div style={{ height: 40, width: 1, background: "var(--border)" }} />
+            <div style={{ height: 44, width: 2, background: "linear-gradient(180deg, transparent, var(--accent-primary), transparent)", opacity: 0.5 }} />
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text-primary)" }}>players have played before you</div>
+              <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text-primary)" }}>have played before you</div>
               <div style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 2 }}>AXIOM scores you relative to them</div>
             </div>
           </div>
