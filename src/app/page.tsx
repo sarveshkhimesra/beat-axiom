@@ -15,6 +15,7 @@ async function getPlayerCount(): Promise<number> {
 }
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 const CARD_COPY: Record<ScenarioId, string[]> = {
   "skeptical-vp": [
