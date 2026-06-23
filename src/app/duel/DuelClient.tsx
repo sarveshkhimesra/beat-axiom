@@ -152,6 +152,12 @@ export default function DuelClient() {
     verdictFiredRef.current = false;
     setVagueStreak(0);
     setPhase("play");
+    // Track player start (fire-and-forget, don't block the game)
+    fetch("/api/duel/start", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ playerName: playerName.trim() }),
+    }).catch(() => {});
   }
 
   async function send() {
