@@ -71,8 +71,8 @@ export default async function ScorecardPage({ params }: { params: Promise<{ shar
   }
   const v = session.verdict;
   const shareUrl = `${baseUrl()}/r/${session.shareId}`;
-  const linkedInText = buildLinkedInShareText(v, shareUrl);
-  const twitterText = buildTwitterShareText(v, shareUrl);
+  const linkedInText = buildLinkedInShareText(v);
+  const twitterText = buildTwitterShareText(v);
   return (
     <main style={{ maxWidth: 680, margin: "0 auto", padding: "clamp(16px, 4vw, 40px)", width: "100%", boxSizing: "border-box" }}>
       <div className="terminal-window" style={{ padding: 0 }}>

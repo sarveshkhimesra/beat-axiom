@@ -20,7 +20,8 @@ export default function ShareButtons({
     sfx.reveal();
   }, []);
 
-  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+  const gameUrl = "https://beat-axiom.vercel.app";
+  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(gameUrl)}`;
   const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterText)}`;
 
   async function copyCaption(): Promise<boolean> {
