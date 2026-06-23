@@ -72,9 +72,15 @@ export default function ShareButtons({
       <div className="font-mono-display" style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 12 }}>
         SHARE YOUR VERDICT
       </div>
+
+      {/* Show the caption text so users know what gets copied */}
+      <div style={{ padding: "12px 14px", background: "var(--bg-primary)", borderRadius: 8, border: "1px solid var(--border)", marginBottom: 16, fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+        {linkedInText}
+      </div>
+
       <div className="share-stack" style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
         <button onClick={onLinkedIn} style={{ ...btn, background: "#0a66c2", borderColor: "#0a66c2" }}>
-          in&nbsp; Share on LinkedIn
+          in&nbsp; Copy &amp; Share on LinkedIn
         </button>
         <button onClick={onX} style={{ ...btn, background: "#000", borderColor: "#333" }}>
           𝕏&nbsp; Share on X
@@ -84,7 +90,7 @@ export default function ShareButtons({
         </button>
       </div>
       {hint && (
-        <p style={{ marginTop: 12, fontSize: 14, color: "var(--accent-primary)" }}>{hint}</p>
+        <p style={{ marginTop: 12, fontSize: 14, color: "var(--accent-primary)", fontWeight: 600 }}>{hint}</p>
       )}
     </div>
   );
