@@ -76,7 +76,6 @@ export async function getSession(shareId: string): Promise<DuelSession | null> {
 }
 
 const PLAYER_COUNT_KEY = "duel:total_players";
-const LEADERBOARD_KEY = "duel:leaderboard";
 const playerKey = (name: string) => `duel:player:${name.toLowerCase().trim()}`;
 
 /** Track a player: increment global player count (if new), track their play count. */
@@ -97,43 +96,3 @@ export async function trackPlayer(playerName: string): Promise<{ playCount: numb
   return { playCount: 1 };
 }
 
-/** Save a player's best score to the leaderboard (keeps highest score per name). */
-export async function saveToLeaderboard(playerName: string, score: number, title: string): Promise<void> {
-  const name = playerName.trim();
-  if (!name) return;
-
-  if (redis) {
-    // Only update if new score is higher than existing
-    const existing = await redis.zscore(LEADERBOARD_KEY, name);
-    if (existing === null || score > existing) {
-      await redis.zadd(LEADERBOARD_KEY, { score, member: name });
-      // Store the title alongside
-      await redis.hset(`duel:lb:${name.toLowerCase()}`, { title, score });
-    }
-  }
-}
-
-export interface LeaderboardRow {
-  name: string;
-  score: number;
-  title: string;
-}
-
-/** Get the top N entries from the real leaderboard in Redis. */
-export async function getLeaderboard(limit: number = 50): Promise<LeaderboardRow[]> {
-  if (!redis) return [];
-
-  const entries = await redis.zrange<string[]>(LEADERBOARD_KEY, 0, limit - 1, { rev: true });
-  if (!entries || entries.length === 0) return [];
-
-  const rows: LeaderboardRow[] = [];
-  for (const name of entries) {
-    const data = await redis.hgetall<{ title?: string; score?: string }>(`duel:lb:${name.toLowerCase()}`);
-    rows.push({
-      name,
-      score: Number(data?.score ?? 0),
-      title: data?.title ?? "—",
-    });
-  }
-  return rows;
-}

@@ -3,7 +3,7 @@ import { anthropicClient, extractText } from "@/lib/anthropic";
 import { getScenario } from "@/lib/duel/scenarios";
 import { buildAxiomVerdictPrompt } from "@/lib/duel/axiomPrompt";
 import { parseVerdict } from "@/lib/duel/rubric";
-import { saveSession, trackPlayer, saveToLeaderboard } from "@/lib/duel/store";
+import { saveSession, trackPlayer } from "@/lib/duel/store";
 import { MAX_PLAYER_TURNS } from "@/lib/duel/config";
 import { VERDICT_MODEL, DUEL_PAUSED } from "@/lib/duel/server-config";
 import { checkVerdictLimit, clientIp, verifyTurnstile } from "@/lib/duel/ratelimit";
@@ -74,7 +74,6 @@ export async function POST(req: NextRequest) {
     });
     if (body.playerName?.trim()) {
       await trackPlayer(body.playerName.trim());
-      await saveToLeaderboard(body.playerName.trim(), verdict.score, verdict.title);
     }
     return NextResponse.json({ session });
   } catch (err) {
