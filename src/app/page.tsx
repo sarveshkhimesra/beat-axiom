@@ -70,9 +70,16 @@ export default async function Home() {
           <p style={{ color: "var(--text-secondary)", fontSize: "clamp(14px, 3.8vw, 17px)", margin: "0 0 12px 0" }}>
             One AI buyer. Ten minutes. Can you close the deal? Pick a scenario below and find out.
           </p>
-          <Link href="/leaderboard" style={{ marginTop: 20, display: "inline-flex", alignItems: "center", gap: 10, padding: "10px 16px", borderRadius: 8, background: "rgba(0, 245, 160, 0.08)", border: "1px solid rgba(0, 245, 160, 0.2)", textDecoration: "none", transition: "border-color 120ms" }}>
-            <span style={{ fontSize: 22, fontWeight: 700, color: "var(--accent-primary)" }}>{playerCount}</span>
-            <span style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.3 }}>players ranked.<br/>See the leaderboard →</span>
+          <Link href="/leaderboard" className="glow-box" style={{ marginTop: 24, display: "flex", alignItems: "center", justifyContent: "center", gap: 16, padding: "20px 24px", borderRadius: 12, background: "linear-gradient(135deg, rgba(0, 245, 160, 0.1) 0%, rgba(123, 47, 255, 0.08) 100%)", border: "1px solid rgba(0, 245, 160, 0.3)", textDecoration: "none", transition: "border-color 200ms, transform 200ms", width: "100%" }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <span style={{ fontSize: 36, fontWeight: 800, color: "var(--accent-primary)", lineHeight: 1 }}>{playerCount}</span>
+              <span style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>players</span>
+            </div>
+            <div style={{ height: 40, width: 1, background: "var(--border)" }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text-primary)" }}>Leaderboard is live</div>
+              <div style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 2 }}>See who&apos;s on top. Can you beat them? →</div>
+            </div>
           </Link>
         </div>
       </div>
