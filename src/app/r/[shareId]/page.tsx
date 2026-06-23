@@ -72,7 +72,7 @@ export default async function ScorecardPage({ params }: { params: Promise<{ shar
   const v = session.verdict;
   const shareUrl = `${baseUrl()}/r/${session.shareId}`;
   const linkedInText = buildLinkedInShareText(v);
-  const twitterText = buildTwitterShareText(v);
+  const twitterText = buildTwitterShareText(v, shareUrl);
   return (
     <main style={{ maxWidth: 680, margin: "0 auto", padding: "clamp(16px, 4vw, 40px)", width: "100%", boxSizing: "border-box" }}>
       <div className="terminal-window" style={{ padding: 0 }}>
@@ -117,7 +117,9 @@ export default async function ScorecardPage({ params }: { params: Promise<{ shar
       {/* share + CTA */}
       <ShareButtons shareUrl={shareUrl} linkedInText={linkedInText} twitterText={twitterText} />
       <div style={{ marginTop: 24, textAlign: "center" }}>
-        <Link href="/" className="accent-text" style={{ fontSize: 16 }}>$ ./start-duel — try again</Link>
+        <Link href="/" className="glow-box" style={{ display: "inline-block", padding: "12px 24px", background: "var(--accent-primary)", color: "#040d08", borderRadius: 8, fontSize: 15, fontWeight: 700, textDecoration: "none" }}>
+          Think you can do better? Play now
+        </Link>
       </div>
     </main>
   );

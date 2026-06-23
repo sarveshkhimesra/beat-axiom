@@ -1,8 +1,6 @@
 import { Verdict } from "./types";
 import { RAHUL_MENTION_LINKEDIN, RAHUL_MENTION_TWITTER } from "./config";
 
-const GAME_URL = "https://beat-axiom.vercel.app";
-
 export function buildLinkedInShareText(verdict: Verdict): string {
   const roast = verdict.roast.replace(/\s+/g, " ").trim();
   const snippet = roast.length > 100 ? roast.slice(0, 97).trimEnd() + "…" : roast;
@@ -11,12 +9,11 @@ export function buildLinkedInShareText(verdict: Verdict): string {
     "",
     `AXIOM's take: "${snippet}"`,
     "",
-    `10 minutes. 1 AI buyer. Can you beat my score?`,
-    GAME_URL,
+    `10 minutes. 1 AI buyer. Think you can beat me?`,
   ].join("\n");
 }
 
-export function buildTwitterShareText(verdict: Verdict): string {
+export function buildTwitterShareText(verdict: Verdict, shareUrl: string): string {
   const roast = verdict.roast.replace(/\s+/g, " ").trim();
   const snippet = roast.length > 80 ? roast.slice(0, 77).trimEnd() + "…" : roast;
   return [
@@ -24,7 +21,6 @@ export function buildTwitterShareText(verdict: Verdict): string {
     "",
     `"${snippet}"`,
     "",
-    `Can you beat me?`,
-    GAME_URL,
+    `Think you can beat me? ${shareUrl}`,
   ].join("\n");
 }

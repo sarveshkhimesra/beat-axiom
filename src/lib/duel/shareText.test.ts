@@ -11,28 +11,32 @@ const verdict: Verdict = {
 };
 
 describe("buildLinkedInShareText", () => {
-  it("includes score, LinkedIn mention, and game URL", () => {
+  it("includes score, LinkedIn mention, and CTA", () => {
     const t = buildLinkedInShareText(verdict);
     expect(t).toContain("62");
     expect(t).toContain("@Rahul Kothari");
-    expect(t).toContain("https://beat-axiom.vercel.app");
+    expect(t).toContain("Think you can beat me?");
   });
   it("includes a roast snippet", () => {
     const t = buildLinkedInShareText(verdict);
     expect(t.toLowerCase()).toContain("hostage");
   });
+  it("does NOT include a URL (LinkedIn adds it via share intent)", () => {
+    const t = buildLinkedInShareText(verdict);
+    expect(t).not.toContain("http");
+  });
 });
 
 describe("buildTwitterShareText", () => {
-  it("includes score, Twitter handle, and game URL", () => {
-    const t = buildTwitterShareText(verdict);
+  it("includes score, Twitter handle, and scorecard URL", () => {
+    const t = buildTwitterShareText(verdict, "https://beat-axiom.vercel.app/r/abc");
     expect(t).toContain("62");
     expect(t).toContain("@rahul_kothari");
-    expect(t).toContain("https://beat-axiom.vercel.app");
+    expect(t).toContain("https://beat-axiom.vercel.app/r/abc");
   });
   it("fits within 280 chars (with 23-char t.co URL)", () => {
-    const t = buildTwitterShareText(verdict);
-    const withTco = t.replace("https://beat-axiom.vercel.app", "https://t.co/xxxxxxxxxxxx");
+    const t = buildTwitterShareText(verdict, "https://beat-axiom.vercel.app/r/abc");
+    const withTco = t.replace("https://beat-axiom.vercel.app/r/abc", "https://t.co/xxxxxxxxxxxx");
     expect(withTco.length).toBeLessThanOrEqual(280);
   });
 });
