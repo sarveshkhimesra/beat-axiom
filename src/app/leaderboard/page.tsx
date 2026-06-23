@@ -1,12 +1,28 @@
 import Link from "next/link";
 import AxiomAvatar from "@/components/AxiomAvatar";
-import { getSeedLeaderboard } from "@/lib/duel/seedLeaderboard";
+import { getSeedLeaderboard, LeaderboardEntry } from "@/lib/duel/seedLeaderboard";
+import { getLeaderboard } from "@/lib/duel/store";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export default function LeaderboardPage() {
-  const entries = getSeedLeaderboard();
+export default async function LeaderboardPage() {
+  const seed = getSeedLeaderboard();
+  const real = await getLeaderboard(50);
+
+  // Merge: real players override seed entries with same name, then combine and sort
+  const nameMap = new Map<string, LeaderboardEntry>();
+  for (const entry of seed) {
+    nameMap.set(entry.name.toLowerCase(), entry);
+  }
+  for (const entry of real) {
+    const key = entry.name.toLowerCase();
+    const existing = nameMap.get(key);
+    if (!existing || entry.score > existing.score) {
+      nameMap.set(key, entry);
+    }
+  }
+  const entries = [...nameMap.values()].sort((a, b) => b.score - a.score);
 
   return (
     <main style={{ maxWidth: 680, margin: "0 auto", padding: "clamp(24px, 5vw, 48px) clamp(16px, 5vw, 28px)" }}>
@@ -42,7 +58,7 @@ export default function LeaderboardPage() {
                 </div>
                 {/* Name + Title */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 15, fontWeight: isTop3 ? 600 : 400, color: isTop3 ? "var(--text-primary)" : "var(--text-primary)" }}>
+                  <div style={{ fontSize: 15, fontWeight: isTop3 ? 600 : 400, color: "var(--text-primary)" }}>
                     {entry.name}
                   </div>
                   <div style={{ fontSize: 11, color: "var(--accent-secondary)", opacity: 0.8 }}>
