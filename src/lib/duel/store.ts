@@ -74,3 +74,24 @@ export async function getSession(shareId: string): Promise<DuelSession | null> {
   }
   return memSessions.get(shareId) ?? null;
 }
+
+const PLAYER_COUNT_KEY = "duel:total_players";
+const playerKey = (name: string) => `duel:player:${name.toLowerCase().trim()}`;
+
+/** Track a player: increment global player count (if new), track their play count. */
+export async function trackPlayer(playerName: string): Promise<{ playCount: number }> {
+  const name = playerName.trim();
+  if (!name) return { playCount: 1 };
+
+  if (redis) {
+    const key = playerKey(name);
+    const exists = await redis.exists(key);
+    if (!exists) {
+      await redis.incr(PLAYER_COUNT_KEY);
+    }
+    const playCount = await redis.hincrby(key, "plays", 1);
+    await redis.hset(key, { name, lastPlayed: Date.now() });
+    return { playCount };
+  }
+  return { playCount: 1 };
+}

@@ -44,6 +44,7 @@ export default function DuelClient() {
   const [error, setError] = useState<string | null>(null);
   const [hook, setHook] = useState<string | null>(null);
   const [muted, setMutedState] = useState(false);
+  const [playerName, setPlayerName] = useState("");
 
   // Timer state
   const [startedAt, setStartedAt] = useState<number | null>(null); // T-5: no Date.now() in init
@@ -118,7 +119,7 @@ export default function DuelClient() {
       const res = await fetch("/api/duel/verdict", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ scenarioId, history: historyRef.current }),
+        body: JSON.stringify({ scenarioId, history: historyRef.current, playerName: playerName.trim() || undefined }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "request failed");
@@ -281,10 +282,22 @@ export default function DuelClient() {
               </div>
             </div>
 
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>your name (shown on scorecard)</label>
+              <input
+                value={playerName}
+                onChange={(e) => setPlayerName(e.target.value)}
+                placeholder="e.g. Rahul"
+                className="prompt-input"
+                style={{ fontSize: 16, padding: "10px 12px", border: "1px solid var(--border)", borderRadius: 6, background: "var(--bg-primary)" }}
+              />
+            </div>
+
             <button
               onClick={beginMeeting}
+              disabled={!playerName.trim()}
               className="glow-box"
-              style={{ width: "100%", padding: "14px 28px", background: "var(--accent-primary)", color: "#040d08", borderRadius: 8, fontSize: 16, fontWeight: 700, border: "none", cursor: "pointer", letterSpacing: "0.03em" }}
+              style={{ width: "100%", padding: "14px 28px", background: playerName.trim() ? "var(--accent-primary)" : "var(--border)", color: "#040d08", borderRadius: 8, fontSize: 16, fontWeight: 700, border: "none", cursor: playerName.trim() ? "pointer" : "not-allowed", letterSpacing: "0.03em", opacity: playerName.trim() ? 1 : 0.5 }}
             >
               start meeting — 10:00 begins
             </button>

@@ -1,7 +1,18 @@
 import Link from "next/link";
+import { Redis } from "@upstash/redis";
 import AxiomAvatar from "@/components/AxiomAvatar";
 import { CLIENT_SCENARIO_IDS, CLIENT_SCENARIOS } from "@/lib/duel/scenarios-client";
 import { ScenarioId } from "@/lib/duel/types";
+
+const SEED_COUNT = 37;
+
+async function getPlayerCount(): Promise<number> {
+  const hasRedis = !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+  if (!hasRedis) return SEED_COUNT;
+  const redis = new Redis({ url: process.env.UPSTASH_REDIS_REST_URL!, token: process.env.UPSTASH_REDIS_REST_TOKEN! });
+  const count = await redis.get<number>("duel:total_players");
+  return (count ?? 0) + SEED_COUNT;
+}
 
 export const runtime = "nodejs";
 
@@ -33,7 +44,8 @@ const CARD_COPY: Record<ScenarioId, string[]> = {
   ],
 };
 
-export default function Home() {
+export default async function Home() {
+  const playerCount = await getPlayerCount();
   return (
     <main style={{ maxWidth: 720, margin: "0 auto", padding: "clamp(40px, 10vw, 80px) clamp(16px, 5vw, 28px)", position: "relative" }}>
 
@@ -54,8 +66,11 @@ export default function Home() {
             Sharpen your sales instincts <span className="accent-text glow">against an AI that fights back.</span>
           </h1>
 
-          <p style={{ color: "var(--text-secondary)", fontSize: "clamp(14px, 3.8vw, 17px)", margin: "0 0 0 0" }}>
+          <p style={{ color: "var(--text-secondary)", fontSize: "clamp(14px, 3.8vw, 17px)", margin: "0 0 12px 0" }}>
             One AI buyer. Ten minutes. Can you close the deal? Pick a scenario below and find out.
+          </p>
+          <p style={{ color: "var(--accent-primary)", fontSize: 14, margin: 0, opacity: 0.9 }}>
+            {playerCount} players have played before you. At the end, AXIOM scores you relative to them.
           </p>
         </div>
       </div>
