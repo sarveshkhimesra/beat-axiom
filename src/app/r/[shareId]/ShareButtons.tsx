@@ -20,9 +20,10 @@ export default function ShareButtons({
     sfx.reveal();
   }, []);
 
-  const gameUrl = "https://beat-axiom.vercel.app";
-  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(gameUrl)}`;
-  const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterText)}`;
+  // LinkedIn: shareUrl unfurls the scorecard OG image as preview; post text has the game link
+  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+  // Twitter: text includes game link + score (OG unfurls from the URL in the tweet)
+  const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterText)}&url=${encodeURIComponent(shareUrl)}`;
 
   async function copyCaption(): Promise<boolean> {
     try {
