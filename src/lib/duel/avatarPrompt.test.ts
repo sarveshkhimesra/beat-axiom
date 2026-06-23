@@ -7,7 +7,7 @@ describe("buildBuyerPrompt", () => {
 
   it("embeds the buyer name, hidden priority guard, and objection", () => {
     const p = buildBuyerPrompt(s, 1);
-    expect(p).toContain("Dana Whitfield");
+    expect(p).toContain("Deepa Narayan");
     expect(p).toContain(s.buyer.hiddenPriority);
     expect(p).toContain(s.buyer.signatureObjection);
   });

@@ -11,7 +11,7 @@ export const SCENARIOS: Record<ScenarioId, Scenario> = {
     setup:
       "You're selling a team-productivity platform to a VP of Operations who was burned by a tool rollout that died in adoption. You have 10 minutes to win the deal.",
     buyer: {
-      name: "Dana Whitfield",
+      name: "Deepa Narayan",
       role: "VP of Operations",
       company: "Nexora Systems",
       companyBrief: "Mid-market SaaS company (~800 employees) selling supply-chain software. Growing 40% YoY but struggling with internal operational overhead as teams scale.",
@@ -23,11 +23,11 @@ export const SCENARIOS: Record<ScenarioId, Scenario> = {
         "Reporting to leadership eats a day a week of manual collation",
       ],
       hiddenPriority:
-        "Dana's real driver is personal: the failed rollout was hers, and her credibility with the leadership team is on the line. She needs a visible internal WIN — fast adoption she can point to — far more than she needs marginal ROI.",
+        "Deepa's real driver is personal: the failed rollout was hers, and her credibility with the leadership team is on the line. She needs a visible internal WIN — fast adoption she can point to — far more than she needs marginal ROI.",
       hiddenPriorityHintTopics: [
         "the last rollout and why it failed",
         "how success will be judged internally",
-        "Dana's own standing / what's at stake for her",
+        "Deepa's own standing / what's at stake for her",
         "adoption and change management",
       ],
       signatureObjection:
@@ -45,7 +45,7 @@ export const SCENARIOS: Record<ScenarioId, Scenario> = {
     setup:
       "You're selling a managed-service engagement to a CFO under board pressure to cut spend. You have 10 minutes to win the deal.",
     buyer: {
-      name: "Marcus Lee",
+      name: "Vikram Mehta",
       role: "Chief Financial Officer",
       company: "Greenfield Industries",
       companyBrief: "Traditional manufacturing conglomerate (~3,000 employees) undergoing digital transformation. Board wants cost discipline but also modernization — conflicting mandates.",
@@ -57,12 +57,12 @@ export const SCENARIOS: Record<ScenarioId, Scenario> = {
         "Wants one clean number, not a tangle of fees",
       ],
       hiddenPriority:
-        "Marcus doesn't actually want the cheapest option — he wants to look INNOVATIVE to the board. He's angling for a transformation story he can present as his own initiative. 'Cost' is the cover; 'I modernized this' is the real prize.",
+        "Vikram doesn't actually want the cheapest option — he wants to look INNOVATIVE to the board. He's angling for a transformation story he can present as his own initiative. 'Cost' is the cover; 'I modernized this' is the real prize.",
       hiddenPriorityHintTopics: [
-        "what the board actually wants to see from Marcus",
+        "what the board actually wants to see from Vikram",
         "how this would be presented upward",
         "transformation / modernization vs pure savings",
-        "what a win looks like for Marcus personally",
+        "what a win looks like for Vikram personally",
       ],
       signatureObjection:
         "Your competitor quoted us thirty percent less for what looks like the exact same scope. Give me one reason that isn't just brand premium.",
@@ -113,7 +113,7 @@ export const SCENARIOS: Record<ScenarioId, Scenario> = {
     setup:
       "You're selling a workflow-automation platform to an internal champion who loves you — but can't sign. You have 10 minutes to win the deal.",
     buyer: {
-      name: "Ethan Morales",
+      name: "Arjun Kapoor",
       role: "Senior Product Manager",
       company: "Kinetic Health",
       companyBrief: "Fast-growing healthtech startup (~200 employees). Moved fast early, now drowning in manual processes as they scale. Teams are patching things together with spreadsheets and Slack.",
@@ -125,17 +125,17 @@ export const SCENARIOS: Record<ScenarioId, Scenario> = {
         "His team loves the idea of automation but leadership hasn't prioritized it",
       ],
       hiddenPriority:
-        "Ethan has no purchase authority. His VP (who he mentions casually) is the actual buyer, and she's skeptical of Ethan's 'shiny object' tendency. Ethan needs a way to present this as HER strategic win, not his pet project.",
+        "Arjun has no purchase authority. His VP (who he mentions casually) is the actual buyer, and she's skeptical of Arjun's 'shiny object' tendency. Arjun needs a way to present this as HER strategic win, not his pet project.",
       hiddenPriorityHintTopics: [
         "who actually signs off on purchases",
-        "what happened to Ethan's last recommendation",
+        "what happened to Arjun's last recommendation",
         "the VP's priorities and what she cares about",
         "how purchase decisions actually get made here",
       ],
       signatureObjection:
         "Look, I'm totally sold — but my VP is going to ask why we need another tool when we just bought something similar six months ago. I need you to help me answer that.",
       budgetSignal:
-        "Budget exists at the VP level for 'strategic ops investments' — but Ethan can't access it directly. He needs ammunition, not approval.",
+        "Budget exists at the VP level for 'strategic ops investments' — but Arjun can't access it directly. He needs ammunition, not approval.",
     },
   },
   "silent-evaluator": {
@@ -147,7 +147,7 @@ export const SCENARIOS: Record<ScenarioId, Scenario> = {
     setup:
       "You're selling a dev-infrastructure platform to a principal engineer who barely speaks. You have 10 minutes to win the deal.",
     buyer: {
-      name: "Dr. Lena Karim",
+      name: "Dr. Sneha Iyer",
       role: "Principal Engineer",
       company: "Vortex Labs",
       companyBrief: "Series C developer-tools company (~150 engineers). Ships fast but infra is held together with duct tape — Jenkins, manual deploys, 45-min CI. Recently lost a senior engineer partly due to tooling frustration.",
@@ -159,7 +159,7 @@ export const SCENARIOS: Record<ScenarioId, Scenario> = {
         "On-call is painful because deploy rollbacks are manual and slow",
       ],
       hiddenPriority:
-        "Lena's team lost their best engineer last month — partly because the tooling was embarrassing. She needs to show the remaining team that leadership is investing in developer experience. It's a retention play disguised as an infrastructure upgrade.",
+        "Sneha's team lost their best engineer last month — partly because the tooling was embarrassing. She needs to show the remaining team that leadership is investing in developer experience. It's a retention play disguised as an infrastructure upgrade.",
       hiddenPriorityHintTopics: [
         "team morale and how the team is feeling",
         "recent departures or attrition",
@@ -169,7 +169,7 @@ export const SCENARIOS: Record<ScenarioId, Scenario> = {
       signatureObjection:
         "What's the migration path? We're not rewriting our pipeline configs for a marginal improvement.",
       budgetSignal:
-        "Budget is pre-approved for 'platform modernization' but Lena will reject anything that creates more work for her already-stretched team. The pitch must be low-migration-effort.",
+        "Budget is pre-approved for 'platform modernization' but Sneha will reject anything that creates more work for her already-stretched team. The pitch must be low-migration-effort.",
     },
   },
 };

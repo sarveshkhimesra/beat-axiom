@@ -70,9 +70,10 @@ export default async function Home() {
           <p style={{ color: "var(--text-secondary)", fontSize: "clamp(14px, 3.8vw, 17px)", margin: "0 0 12px 0" }}>
             One AI buyer. Ten minutes. Can you close the deal? Pick a scenario below and find out.
           </p>
-          <p style={{ color: "var(--accent-primary)", fontSize: 14, margin: 0, opacity: 0.9 }}>
-            {playerCount} players have played before you. At the end, AXIOM scores you relative to them.
-          </p>
+          <div style={{ marginTop: 20, display: "inline-flex", alignItems: "center", gap: 10, padding: "10px 16px", borderRadius: 8, background: "rgba(0, 245, 160, 0.08)", border: "1px solid rgba(0, 245, 160, 0.2)" }}>
+            <span style={{ fontSize: 22, fontWeight: 700, color: "var(--accent-primary)" }}>{playerCount}</span>
+            <span style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.3 }}>players have played.<br/>AXIOM ranks you against them.</span>
+          </div>
         </div>
       </div>
 
