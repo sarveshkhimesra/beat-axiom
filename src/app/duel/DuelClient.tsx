@@ -381,19 +381,27 @@ export default function DuelClient() {
       <div style={{ padding: "12px 16px", borderTop: "1px solid var(--border)", flexShrink: 0, background: "var(--bg-terminal)" }}>
         {error && <div className="danger-text" style={{ fontSize: 13, marginBottom: 8 }}>[error] {error}</div>}
         {canSend ? (
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 8 }}>
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
-              placeholder="type your question..."
-              disabled={busy}
-              className="prompt-input"
-              rows={Math.min(4, Math.max(1, input.split("\n").length))}
-              style={{ fontSize: 16, resize: "none", lineHeight: 1.5, minHeight: 40, maxHeight: 120, overflowY: "auto" }}
-              aria-label="Type your sales question to the AI buyer"
-            />
-            <button onClick={send} disabled={busy || !input.trim()} className="btn-primary btn" style={{ padding: "10px 18px", minWidth: 44, minHeight: 44 }}>{"↵"}</button>
+          <div>
+            {history.length === 0 && (
+              <div style={{ fontSize: 12, color: "var(--accent-primary)", marginBottom: 8, fontWeight: 500 }}>
+                Type your opening line below and hit send
+              </div>
+            )}
+            <div style={{ display: "flex", alignItems: "flex-end", gap: 8, padding: "10px 12px", borderRadius: 10, border: "1px solid var(--border)", background: "var(--bg-primary)" }}>
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
+                placeholder={history.length === 0 ? "Start the conversation..." : "Ask your next question..."}
+                disabled={busy}
+                autoFocus
+                className="prompt-input"
+                rows={Math.min(4, Math.max(1, input.split("\n").length))}
+                style={{ fontSize: 16, resize: "none", lineHeight: 1.5, minHeight: 44, maxHeight: 120, overflowY: "auto", border: "none", padding: 0, background: "transparent" }}
+                aria-label="Type your sales question to the AI buyer"
+              />
+              <button onClick={send} disabled={busy || !input.trim()} className="btn-primary btn" style={{ padding: "10px 18px", minWidth: 48, minHeight: 48, borderRadius: 8, fontSize: 18 }}>{"↵"}</button>
+            </div>
           </div>
         ) : (
           <div style={{ color: "var(--text-secondary)", fontSize: 13 }}>
