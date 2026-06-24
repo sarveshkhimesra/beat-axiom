@@ -22,7 +22,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ shareId
       <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: "#0a0a0f", color: "#e8e8f0", padding: 64, fontFamily: "monospace" }}>
         <div style={{ display: "flex", justifyContent: "space-between", color: "#8888aa", fontSize: 28 }}>
           <span>{`BEAT AXIOM // ${scenario}`}</span>
-          <span>built by Rahul Kothari</span>
+          <span>by Rahul Kothari</span>
         </div>
         <div style={{ display: "flex", alignItems: "baseline", marginTop: 40 }}>
           <span style={{ fontSize: 200, color: "#00f5a0", fontWeight: 700 }}>{String(score)}</span>

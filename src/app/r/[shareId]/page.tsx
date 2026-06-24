@@ -81,7 +81,7 @@ export default async function ScorecardPage({ params }: { params: Promise<{ shar
           <AxiomAvatar size={48} />
           <div>
             <div className="accent-text glow" style={{ fontSize: 18, fontWeight: 700 }}>AXIOM // VERDICT</div>
-            <div style={{ color: "var(--text-secondary)", fontSize: 12 }}>{session.scenarioTitle} · built by rahul kothari</div>
+            <div style={{ color: "var(--text-secondary)", fontSize: 12 }}>{session.scenarioTitle}</div>
           </div>
         </div>
 

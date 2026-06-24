@@ -64,7 +64,7 @@ export default async function Home() {
 
           {/* headline */}
           <h1 style={{ fontSize: "clamp(24px, 6vw, 38px)", lineHeight: 1.2, margin: "0 0 20px 0" }}>
-            Sharpen your sales instincts <span className="accent-text glow">against an AI that fights back.</span>
+            Sharpen your sales instincts <span className="accent-text glow">against an AI that is hard to persuade.</span>
           </h1>
 
           <p style={{ color: "var(--text-secondary)", fontSize: "clamp(14px, 3.8vw, 17px)", margin: "0 0 12px 0" }}>
@@ -124,11 +124,8 @@ export default async function Home() {
       </section>
 
       {/* footer */}
-      <p style={{ marginTop: 40, fontSize: 13, color: "var(--text-secondary)", textAlign: "center" }}>
-        built by rahul kothari
-      </p>
-      <p style={{ marginTop: 8, fontSize: 11, color: "var(--text-secondary)", textAlign: "center", opacity: 0.6 }}>
-        A fictional sales-training simulation. All buyers and scenarios are invented. This is a personal project by Rahul Kothari and has no association with Razorpay.
+      <p style={{ marginTop: 40, fontSize: 11, color: "var(--text-secondary)", textAlign: "center", opacity: 0.5 }}>
+        A fictional sales-training simulation. All buyers and scenarios are invented. This is a personal project by Rahul Kothari. No association with any company.
       </p>
       <div style={{ marginTop: 16, textAlign: "center", fontSize: 11, opacity: 0.5 }}>
         <a href="/privacy" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Privacy</a>
