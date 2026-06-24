@@ -289,15 +289,17 @@ export default function DuelClient() {
               </div>
             </div>
 
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>your name (shown on scorecard)</label>
+            <div style={{ marginBottom: 20, padding: "16px", borderRadius: 10, border: "2px solid var(--accent-primary)", background: "rgba(0, 245, 160, 0.04)" }}>
+              <label style={{ fontSize: 14, fontWeight: 600, color: "var(--accent-primary)", display: "block", marginBottom: 8 }}>What&apos;s your name?</label>
               <input
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
-                placeholder="e.g. Rahul"
+                placeholder="Enter your name"
                 className="prompt-input"
-                style={{ fontSize: 16, padding: "10px 12px", border: "1px solid var(--border)", borderRadius: 6, background: "var(--bg-primary)" }}
+                autoFocus
+                style={{ fontSize: 18, padding: "12px 14px", border: "1px solid var(--border)", borderRadius: 8, background: "var(--bg-primary)", fontWeight: 500 }}
               />
+              <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 6 }}>shown on your scorecard when you share</div>
             </div>
 
             <button
