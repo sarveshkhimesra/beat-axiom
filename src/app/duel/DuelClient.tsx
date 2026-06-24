@@ -213,25 +213,26 @@ export default function DuelClient() {
   if (phase === "pick") {
     return (
       <main style={wrap}>
-        <div className="terminal-window" style={{ padding: 0 }}>
-          <div style={{ padding: "clamp(20px, 5vw, 32px)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
-              <AxiomAvatar size={40} />
-              <div>
-                <div className="accent-text" style={{ fontSize: 15, fontWeight: 700 }}>AXIOM</div>
-                <div style={{ color: "var(--text-secondary)", fontSize: 11 }}>select scenario // 10 minutes each</div>
-              </div>
-              <div style={{ marginLeft: "auto" }}>{muteBtn}</div>
+        <div style={{ padding: "clamp(20px, 5vw, 32px) 0" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
+            <AxiomAvatar size={40} />
+            <div>
+              <div className="accent-text" style={{ fontSize: 16, fontWeight: 700 }}>Choose Your Buyer</div>
+              <div style={{ color: "var(--text-secondary)", fontSize: 12 }}>pick a scenario — 10 minutes each</div>
             </div>
-            <div style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 16 }}>$ ls scenarios/</div>
-            <div style={{ display: "grid", gap: 10 }}>
-              {CLIENT_SCENARIO_IDS.map((id) => (
-                <button key={id} onClick={() => selectScenario(id)} className="glow-box" style={{ textAlign: "left", padding: "14px 16px", borderRadius: 8, cursor: "pointer", color: "var(--text-primary)", background: "var(--bg-surface)", border: "1px solid var(--border)", transition: "border-color 120ms" }}>
-                  <div className="accent-text" style={{ fontSize: "clamp(15px, 4vw, 18px)", fontWeight: 600 }}>{CLIENT_SCENARIOS[id].title}</div>
-                  <div style={{ color: "var(--text-secondary)", marginTop: 4, fontSize: 13 }}>{CLIENT_SCENARIOS[id].setup}</div>
-                </button>
-              ))}
-            </div>
+            <div style={{ marginLeft: "auto" }}>{muteBtn}</div>
+          </div>
+          <div style={{ display: "grid", gap: 12 }}>
+            {CLIENT_SCENARIO_IDS.map((id) => (
+              <button key={id} onClick={() => selectScenario(id)} className="glow-box" style={{ textAlign: "left", padding: "clamp(14px, 4vw, 18px)", borderRadius: 10, cursor: "pointer", color: "var(--text-primary)", background: "var(--bg-surface)", border: "1px solid var(--border)", transition: "border-color 120ms" }}>
+                <div className="accent-text" style={{ fontSize: "clamp(16px, 4vw, 19px)", fontWeight: 600, marginBottom: 6 }}>{CLIENT_SCENARIOS[id].title}</div>
+                <div style={{ color: "var(--text-secondary)", fontSize: "clamp(13px, 3.5vw, 14px)", lineHeight: 1.6 }}>{CLIENT_SCENARIOS[id].setup}</div>
+                <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid var(--border)", fontSize: 12, color: "var(--text-secondary)" }}>
+                  <span style={{ opacity: 0.6 }}>your pitch:</span>{" "}
+                  <span style={{ color: "var(--text-primary)", opacity: 0.85 }}>{CLIENT_SCENARIOS[id].product}</span>
+                </div>
+              </button>
+            ))}
           </div>
         </div>
       </main>
