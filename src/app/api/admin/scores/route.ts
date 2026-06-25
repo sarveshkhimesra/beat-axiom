@@ -32,5 +32,38 @@ export async function GET(req: NextRequest) {
 
   const totalPlayers = await redis.get<number>("duel:total_players") ?? 0;
 
-  return NextResponse.json({ totalPlayers, results });
+  // Scan all player keys to get names and play counts
+  const players: { name: string; plays: number; lastPlayed: number }[] = [];
+  let cursor = 0;
+  do {
+    const [nextCursor, keys] = await redis.scan(cursor, { match: "duel:player:*", count: 100 });
+    cursor = Number(nextCursor);
+    for (const key of keys) {
+      const data = await redis.hgetall<{ name?: string; plays?: string; lastPlayed?: string }>(key);
+      if (data?.name) {
+        players.push({
+          name: data.name,
+          plays: Number(data.plays ?? 1),
+          lastPlayed: Number(data.lastPlayed ?? 0),
+        });
+      }
+    }
+  } while (cursor !== 0);
+
+  // Sort by most recent
+  players.sort((a, b) => b.lastPlayed - a.lastPlayed);
+
+  // Get leaderboard scores (if any)
+  const leaderboard: { name: string; score: number; title: string }[] = [];
+  const lbEntries = await redis.zrange<string[]>("duel:leaderboard", 0, -1, { rev: true, withScores: true });
+  if (lbEntries) {
+    for (let i = 0; i < lbEntries.length; i += 2) {
+      const name = String(lbEntries[i]);
+      const score = Number(lbEntries[i + 1]);
+      const meta = await redis.hgetall<{ title?: string }>(`duel:lb:${name.toLowerCase()}`);
+      leaderboard.push({ name, score, title: meta?.title ?? "—" });
+    }
+  }
+
+  return NextResponse.json({ totalPlayers, players, leaderboard, results });
 }
