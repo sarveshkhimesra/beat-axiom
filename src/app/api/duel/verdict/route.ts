@@ -71,6 +71,7 @@ export async function POST(req: NextRequest) {
       scenarioId: scenario.id,
       scenarioTitle: scenario.title,
       verdict,
+      playerName: body.playerName?.trim(),
     });
     if (body.playerName?.trim()) {
       await trackPlayer(body.playerName.trim());

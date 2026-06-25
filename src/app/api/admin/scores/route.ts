@@ -17,14 +17,18 @@ export async function GET(req: NextRequest) {
   const redis = new Redis({ url: process.env.UPSTASH_REDIS_REST_URL!, token: process.env.UPSTASH_REDIS_REST_TOKEN! });
   const scenarios = ["skeptical-vp", "cutting-cfo", "committee-gatekeeper", "enthusiastic-champion", "silent-evaluator"];
 
-  const results: Record<string, { shareId: string; score: number }[]> = {};
+  const results: Record<string, { shareId: string; score: number; playerName?: string; createdAt?: number }[]> = {};
 
   for (const s of scenarios) {
     const entries = await redis.zrange<string[]>(`duel:scores:${s}`, 0, -1, { rev: true, withScores: true });
-    const parsed: { shareId: string; score: number }[] = [];
+    const parsed: { shareId: string; score: number; playerName?: string; createdAt?: number }[] = [];
     if (entries) {
       for (let i = 0; i < entries.length; i += 2) {
-        parsed.push({ shareId: String(entries[i]), score: Number(entries[i + 1]) });
+        const shareId = String(entries[i]);
+        const score = Number(entries[i + 1]);
+        // Try to get playerName from the session
+        const session = await redis.get<{ playerName?: string; createdAt?: number }>(`duel:session:${shareId}`);
+        parsed.push({ shareId, score, playerName: session?.playerName, createdAt: session?.createdAt });
       }
     }
     results[s] = parsed;

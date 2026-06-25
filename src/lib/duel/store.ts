@@ -31,6 +31,7 @@ export async function saveSession(args: {
   scenarioId: ScenarioId;
   scenarioTitle: string;
   verdict: Verdict;
+  playerName?: string;
 }): Promise<DuelSession> {
   const shareId = nanoid(10);
   const score = args.verdict.score;
@@ -54,6 +55,7 @@ export async function saveSession(args: {
     shareId,
     scenarioId: args.scenarioId,
     scenarioTitle: args.scenarioTitle,
+    playerName: args.playerName || undefined,
     verdict: args.verdict,
     percentile,
     createdAt: Date.now(),

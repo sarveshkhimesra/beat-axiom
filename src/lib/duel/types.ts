@@ -65,6 +65,7 @@ export interface DuelSession {
   shareId: string;
   scenarioId: ScenarioId;
   scenarioTitle: string;
+  playerName?: string;
   verdict: Verdict;
   percentile: number; // 0–100, computed at persist time
   createdAt: number;
